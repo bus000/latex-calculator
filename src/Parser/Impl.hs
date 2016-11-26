@@ -47,19 +47,12 @@ parseExpr0 = parseExpr1 `chainl1` plusminus
     minus = infixOp "-" Minus
 
 parseExpr1 :: ReadP Expr
-parseExpr1 = parseExpr2 `chainl1` muldiv
+parseExpr1 = parseExpr2 `chainl1` mult
   where
-    muldiv = mult <|> divi
     mult = infixOp "*" Product
-    divi = do
-        string "\\frac"
-        expr1 <- between (token $ char '{') (token $ char '}') parseExpr0
-        expr2 <- between (token $ char '{') (token $ char '}') parseExpr0
 
-        return $ Fraction expr1 expr2
-
-parseExpr3 :: ReadP Expr
-parseExpr3 = real <++ whole
+parseExpr2 :: ReadP Expr
+parseExpr2 = real <++ whole <++ divi
   where
     real = do
         skipSpaces
@@ -76,9 +69,17 @@ parseExpr3 = real <++ whole
     whole = do
         skipSpaces
         minus <- option ' ' (char '-')
+        first <- satisfy (`elem` ['1'..'9'])
         digits <- munch isDigit
 
-        return $ Literal (Whole $ read (minus:digits))
+        return $ Literal (Whole $ read (minus:first:digits))
+
+    divi = do
+        string "\\frac"
+        expr1 <- between (token $ char '{') (token $ char '}') parseExpr0
+        expr2 <- between (token $ char '{') (token $ char '}') parseExpr0
+
+        return $ Fraction expr1 expr2
 
 infixOp :: String -> (a -> a -> a) -> ReadP (a -> a -> a)
 infixOp x f = token (string x) >> return f

@@ -54,7 +54,7 @@ product2 = assertBool "" $ result `elem` readP_to_S parseExpr1 program
     program = " 1 * 2 * 3 * 4 * 5 "
 
 fraction1 :: Assertion
-fraction1 = assertBool "" $ result `elem` readP_to_S parseExpr1 program
+fraction1 = assertBool "" $ result `elem` readP_to_S parseExpr2 program
   where
     result = (Fraction (Literal $ Whole 10) (Literal $ Whole 20), "")
     program = "\\frac{10}{20}"
