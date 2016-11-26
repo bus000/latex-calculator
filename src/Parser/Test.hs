@@ -25,6 +25,9 @@ unitTests = testGroup "Unit tests"
     , testCase "product2" product2
 
     , testCase "fraction1" fraction1
+    , testCase "fraction2" fraction2
+
+    , testCase "expr1" expr1
     ]
 
 literal1 :: Assertion
@@ -59,6 +62,18 @@ fraction1 = assertBool "" $ result `elem` readP_to_S parseExpr2 program
     result = (Fraction (Literal $ Whole 10) (Literal $ Whole 20), "")
     program = "\\frac{10}{20}"
 
+fraction2 :: Assertion
+fraction2 = assertBool "" $ result `elem` readP_to_S parseExpr2 program
+  where
+    result = (Fraction (Literal $ Whole 10) (Literal $ Whole 20), "")
+    program = "\\frac  { 10\t}   {  20 }  "
+
+expr1 :: Assertion
+expr1 = Right result @=? parseString program
+  where
+    result = (Sum (Sum (Literal $ Whole 2) (Product (Literal $ Whole 3)
+        (Literal $ Whole 4))) (Literal $ Whole 5))
+    program = " 2 + 3   * 4  +  5   "
 
 main :: IO ()
 main = defaultMain $ testGroup "Parser Tests" [ unitTests ]
