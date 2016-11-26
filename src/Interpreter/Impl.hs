@@ -2,9 +2,33 @@ module Interpreter.Impl where
 
 import ASTree
 
-interpret :: Expr -> Number
-interpret (Sum e1 e2) = (interpret e1) + (interpret e2)
-interpret (Product e1 e2) = (interpret e1) * (interpret e2)
-interpret (Fraction e1 e2) = (interpret e1) / (interpret e2)
-interpret (Minus e1 e2) = (interpret e1) - (interpret e2)
-interpret (Literal num) = num
+interpret :: Expr -> Either String Number
+interpret (Sum e1 e2) = do
+    a <- interpret e1
+    b <- interpret e2
+    return $ a + b
+interpret (Product e1 e2) = do
+    a <- interpret e1
+    b <- interpret e2
+    return $ a * b
+interpret (Fraction e1 e2) = do
+    a <- interpret e1
+    b <- interpret e2
+    return $ a / b
+interpret (Minus e1 e2) = do
+    a <- interpret e1
+    b <- interpret e2
+    return $ a - b
+interpret (Factorial e) = do
+    a <- interpret e
+    case a of
+        Whole n -> return $ Whole (fact n)
+        Real r -> Left $ "Factorial of real " ++ (show r)
+interpret (Literal num) = return num
+
+-- TODO: implement support for \binom as haskell has a choose function
+
+fact :: Integer -> Integer
+fact 0 = 1
+fact 1 = 1
+fact n = n * fact (n - 1)

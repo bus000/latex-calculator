@@ -5,10 +5,11 @@ data Expr
     | Product Expr Expr
     | Fraction Expr Expr
     | Minus Expr Expr
+    | Factorial Expr
     | Literal Number
     deriving (Show, Eq)
 
-data Number = Real Double | Whole Integer deriving (Show)
+data Number = Real Double | Whole Integer
 
 epsilon :: Double
 epsilon = 0.000001
@@ -53,3 +54,7 @@ instance Fractional Number where
     (Real d1) / (Real d2) = Real $ d1 / d2
 
     fromRational r = Real $ fromRational r
+
+instance Show Number where
+    show (Real d) = show d
+    show (Whole n) = show n
