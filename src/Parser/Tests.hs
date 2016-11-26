@@ -23,6 +23,8 @@ unitTests = testGroup "Unit tests"
 
     , testCase "product1" product1
     , testCase "product2" product2
+    , testCase "product3" product3
+    , testCase "product4" product4
 
     , testCase "fraction1" fraction1
     , testCase "fraction2" fraction2
@@ -55,6 +57,18 @@ product2 = assertBool "" $ result `elem` readP_to_S parseExpr1 program
         (Literal $ Whole 1) (Literal $ Whole 2)) (Literal $ Whole 3))
         (Literal $ Whole 4)) (Literal $ Whole 5), " ")
     program = " 1 * 2 * 3 * 4 * 5 "
+
+product3 :: Assertion
+product3 = assertBool "" $ result `elem` readP_to_S parseExpr1 program
+  where
+    result = (Product (Literal $ Whole 10) (Literal $ Whole 20), "")
+    program = "10 \\cdot 20"
+
+product4 :: Assertion
+product4 = assertBool "" $ result `elem` readP_to_S parseExpr1 program
+  where
+    result = (Product (Literal $ Whole 10) (Literal $ Whole 20), "")
+    program = "10 \\times 20"
 
 fraction1 :: Assertion
 fraction1 = assertBool "" $ result `elem` readP_to_S parseExpr2 program

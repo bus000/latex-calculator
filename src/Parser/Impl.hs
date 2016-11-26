@@ -52,7 +52,10 @@ parseExpr0 = parseExpr1 `chainl1` plusminus
 parseExpr1 :: ReadP Expr
 parseExpr1 = parseExpr2 `chainl1` mult
   where
-    mult = infixOp "*" Product
+    mult = mult1 <|> mult2 <|> mult3
+    mult1 = infixOp "*" Product
+    mult2 = infixOp "\\cdot" Product
+    mult3 = infixOp "\\times" Product
 
 parseExpr2 :: ReadP Expr
 parseExpr2 = real <++ whole <++ divi
