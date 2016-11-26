@@ -29,12 +29,15 @@ import Data.Char
 
 type ParseError = String
 
-parseString :: String -> Expr
-parseString = undefined
+parseString :: String -> Either String Expr
+parseString str = case readP_to_S parseExpr str of
+    [(program, "")] -> Right program
+    _ -> Left "Parse error"
 
 parseExpr :: ReadP Expr
 parseExpr = do
     expr <- parseExpr0
+    skipSpaces
     eof
 
     return expr
