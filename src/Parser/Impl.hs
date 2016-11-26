@@ -36,8 +36,7 @@ parseString str = case readP_to_S parseExpr str of
 
 parseExpr :: ReadP Expr
 parseExpr = do
-    expr <- parseExpr0
-    skipSpaces
+    expr <- token parseExpr0
     eof
 
     return expr
@@ -58,7 +57,22 @@ parseExpr1 = parseExpr2 `chainl1` mult
     mult3 = infixOp "\\times" Product
 
 parseExpr2 :: ReadP Expr
-parseExpr2 = real <++ whole <++ divi
+parseExpr2 = fact <++ parseExpr3 <++ divi
+  where
+    divi = do
+        string "\\frac"
+        expr1 <- between (token $ char '{') (token $ char '}') parseExpr0
+        expr2 <- between (token $ char '{') (token $ char '}') parseExpr0
+
+        return $ Fraction expr1 expr2
+
+    fact = do
+        expr <- token parseExpr3
+        char '!'
+        return $ Factorial expr
+
+parseExpr3 :: ReadP Expr
+parseExpr3 = real <++ whole
   where
     real = do
         skipSpaces
@@ -79,13 +93,6 @@ parseExpr2 = real <++ whole <++ divi
         digits <- munch isDigit
 
         return $ Literal (Whole $ read (minus:first:digits))
-
-    divi = do
-        string "\\frac"
-        expr1 <- between (token $ char '{') (token $ char '}') parseExpr0
-        expr2 <- between (token $ char '{') (token $ char '}') parseExpr0
-
-        return $ Fraction expr1 expr2
 
 infixOp :: String -> (a -> a -> a) -> ReadP (a -> a -> a)
 infixOp x f = token (string x) >> return f
