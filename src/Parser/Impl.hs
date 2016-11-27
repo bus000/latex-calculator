@@ -71,7 +71,7 @@ parseExpr3 = real <++ whole <++ bracket
   where
     real = token $ do
         minus <- option ' ' (char '-')
-        first <- satisfy (`elem` ['1'..'9'])
+        first <- satisfy (`elem` ['0'..'9'])
         digits1 <- munch isDigit
         _ <- char '.'
         digits2 <- munch isDigit
@@ -83,7 +83,7 @@ parseExpr3 = real <++ whole <++ bracket
     whole = do
         skipSpaces
         minus <- option ' ' (char '-')
-        first <- satisfy (`elem` ['1'..'9'])
+        first <- satisfy (`elem` ['0'..'9'])
         digits <- munch isDigit
 
         return $ Literal (Whole $ read (minus:first:digits))
