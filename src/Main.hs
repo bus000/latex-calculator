@@ -19,5 +19,5 @@ main = do
     case args of
         [str] -> case parseString str of
             Right program -> print $ interpret program
-            Left error -> putStrLn error
+            Left err -> putStrLn err
         _ -> putStrLn "Expect a single argument"

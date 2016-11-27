@@ -7,15 +7,10 @@ import ASTree
 import Text.ParserCombinators.ReadP
     ( ReadP
     , readP_to_S
-    , many
     , eof
     , char
     , munch
-    , munch1
-    , many1
     , (<++)
-    , pfail
-    , look
     , chainl1
     , string
     , between
@@ -60,7 +55,7 @@ parseExpr2 :: ReadP Expr
 parseExpr2 = fact <++ parseExpr3 <++ divi
   where
     divi = do
-        string "\\frac"
+        _ <- string "\\frac"
         expr1 <- between (token $ char '{') (token $ char '}') parseExpr0
         expr2 <- between (token $ char '{') (token $ char '}') parseExpr0
 
@@ -68,7 +63,7 @@ parseExpr2 = fact <++ parseExpr3 <++ divi
 
     fact = do
         expr <- token parseExpr3
-        char '!'
+        _ <- char '!'
         return $ Factorial expr
 
 parseExpr3 :: ReadP Expr
@@ -78,7 +73,7 @@ parseExpr3 = real <++ whole <++ bracket
         minus <- option ' ' (char '-')
         first <- satisfy (`elem` ['1'..'9'])
         digits1 <- munch isDigit
-        char '.'
+        _ <- char '.'
         digits2 <- munch isDigit
 
         let int = Whole $ read (minus:first:digits1)
