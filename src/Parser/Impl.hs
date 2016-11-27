@@ -72,7 +72,7 @@ parseExpr2 = fact <++ parseExpr3 <++ divi
         return $ Factorial expr
 
 parseExpr3 :: ReadP Expr
-parseExpr3 = real <++ whole
+parseExpr3 = real <++ whole <++ bracket
   where
     real = do
         skipSpaces
@@ -93,6 +93,8 @@ parseExpr3 = real <++ whole
         digits <- munch isDigit
 
         return $ Literal (Whole $ read (minus:first:digits))
+
+    bracket = between (token $ char '(') (token $ char ')') parseExpr0
 
 infixOp :: String -> (a -> a -> a) -> ReadP (a -> a -> a)
 infixOp x f = token (string x) >> return f

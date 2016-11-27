@@ -33,6 +33,10 @@ unitTests = testGroup "Unit tests"
     , testCase "factorial2" factorial2
 
     , testCase "expr1" expr1
+    , testCase "expr2" expr2
+    , testCase "expr3" expr3
+    , testCase "expr4" expr4
+    , testCase "expr5" expr5
     ]
 
 literal1 :: Assertion
@@ -103,6 +107,35 @@ expr1 = Right result @=? parseString program
     result = (Sum (Sum (Literal $ Whole 2) (Product (Literal $ Whole 3)
         (Literal $ Whole 4))) (Literal $ Whole 5))
     program = " 2 + 3   * 4  +  5   "
+
+expr2 :: Assertion
+expr2 = Right result @=? parseString program
+  where
+    result = Fraction over under
+    over = fact10
+    under = Product fact10
+        (Factorial (Minus (Literal $ Whole 10) (Literal $ Whole 5)))
+    fact10 = Factorial (Literal $ Whole 10)
+    program = "\\frac{10!}{10! \\cdot (10 - 5)!}"
+
+expr3 :: Assertion
+expr3 = Right result @=? parseString program
+  where
+    result = Product (Literal $ Whole 2)
+        (Sum (Literal $ Whole 5) (Literal $ Whole 4))
+    program = "2 * (5 + 4)"
+
+expr4 :: Assertion
+expr4 = Right result @=? parseString program
+  where
+    result = Sum (Literal $ Whole 5) (Literal $ Whole 10)
+    program = "(5 + 10)"
+
+expr5 :: Assertion
+expr5 = Right result @=? parseString program
+  where
+    result = Literal $ Whole 5
+    program = "(5)"
 
 main :: IO ()
 main = defaultMain $ testGroup "Parser Tests" [ unitTests ]
