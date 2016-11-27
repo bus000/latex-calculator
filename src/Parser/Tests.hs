@@ -37,6 +37,7 @@ unitTests = testGroup "Unit tests"
     , testCase "expr3" expr3
     , testCase "expr4" expr4
     , testCase "expr5" expr5
+    , testCase "expr6" expr6
     ]
 
 literal1 :: Assertion
@@ -136,6 +137,13 @@ expr5 = Right result @=? parseString program
   where
     result = Literal $ Whole 5
     program = "(5)"
+
+expr6 :: Assertion
+expr6 = Right result @=? parseString program
+  where
+    result = Factorial (Product (Literal $ Whole 2)
+        (Sum (Literal $ Whole 5) (Literal $ Whole 4)))
+    program = "(2 * \\left(5 + 4\\right))!"
 
 main :: IO ()
 main = defaultMain $ testGroup "Parser Tests" [ unitTests ]
