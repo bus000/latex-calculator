@@ -23,7 +23,7 @@ interpret (Factorial e) = do
     a <- interpret e
     case a of
         Whole n -> return $ Whole (fact n)
-        Real r -> Left $ "Factorial of real " ++ (show r)
+        Real r -> Left $ "Factorial of real " ++ show r
 interpret (Literal num) = return num
 
 -- TODO: implement support for \binom as haskell has a choose function

@@ -31,54 +31,54 @@ unitTests = testGroup "Unit tests"
 sum1 :: Assertion
 sum1 = Right (Whole 10) @=? interpret tree
   where
-    tree = (Sum (Literal $ Whole 5)
-        (Sum (Literal $ Whole 3) (Literal $ Whole 2)))
+    tree = Sum (Literal $ Whole 5)
+        (Sum (Literal $ Whole 3) (Literal $ Whole 2))
 
 sum2 :: Assertion
 sum2 = Right (Real 10) @=? interpret tree
   where
-    tree = (Sum (Literal $ Whole 5)
-        (Sum (Literal $ Real 3) (Literal $ Whole 2)))
+    tree = Sum (Literal $ Whole 5)
+        (Sum (Literal $ Real 3) (Literal $ Whole 2))
 
 product1 :: Assertion
 product1 = Right (Whole 50) @=? interpret tree
   where
-    tree = (Product (Literal $ Whole 2)
-        (Product (Literal $ Whole 5) (Literal $ Whole 5)))
+    tree = Product (Literal $ Whole 2)
+        (Product (Literal $ Whole 5) (Literal $ Whole 5))
 
 product2 :: Assertion
 product2 = Right (Real 50) @=? interpret tree
   where
-    tree = (Product (Literal $ Real 2)
-        (Product (Literal $ Whole 5) (Literal $ Whole 5)))
+    tree = Product (Literal $ Real 2)
+        (Product (Literal $ Whole 5) (Literal $ Whole 5))
 
 fractional1 :: Assertion
 fractional1 = Right (Real 2.5) @=? interpret tree
   where
-    tree = (Fraction (Literal $ Whole 10)
-        (Fraction (Literal $ Whole 2) (Literal $ Real 0.5)))
+    tree = Fraction (Literal $ Whole 10)
+        (Fraction (Literal $ Whole 2) (Literal $ Real 0.5))
 
 minus1 :: Assertion
 minus1 = Right (Whole 10) @=? interpret tree
   where
-    tree = (Minus (Literal $ Whole 50)
-        (Minus (Literal $ Whole 5) (Literal $ Whole (-35))))
+    tree = Minus (Literal $ Whole 50)
+        (Minus (Literal $ Whole 5) (Literal $ Whole (-35)))
 
 minus2 :: Assertion
 minus2 = Right (Whole 10) @=? interpret tree
   where
-    tree = (Minus (Literal $ Real 50)
-        (Minus (Literal $ Whole 5) (Literal $ Whole (-35))))
+    tree = Minus (Literal $ Real 50)
+        (Minus (Literal $ Whole 5) (Literal $ Whole (-35)))
 
 factorial1 :: Assertion
 factorial1 = Right (Whole 120) @=? interpret tree
   where
-    tree = (Factorial (Product (Literal $ Whole 5) (Literal $ Whole 1)))
+    tree = Factorial (Product (Literal $ Whole 5) (Literal $ Whole 1))
 
 factorial2 :: Assertion
 factorial2 = Left "Factorial of real 5.0" @=? interpret tree
   where
-    tree = (Factorial (Product (Literal $ Whole 5) (Literal $ Real 1)))
+    tree = Factorial (Product (Literal $ Whole 5) (Literal $ Real 1))
 
 main :: IO ()
 main = defaultMain $ testGroup "Interpreter Tests" [ unitTests ]

@@ -74,8 +74,7 @@ parseExpr2 = fact <++ parseExpr3 <++ divi
 parseExpr3 :: ReadP Expr
 parseExpr3 = real <++ whole <++ bracket
   where
-    real = do
-        skipSpaces
+    real = token $ do
         minus <- option ' ' (char '-')
         first <- satisfy (`elem` ['1'..'9'])
         digits1 <- munch isDigit

@@ -105,8 +105,8 @@ factorial2 = result @=? readP_to_S parseExpr program
 expr1 :: Assertion
 expr1 = Right result @=? parseString program
   where
-    result = (Sum (Sum (Literal $ Whole 2) (Product (Literal $ Whole 3)
-        (Literal $ Whole 4))) (Literal $ Whole 5))
+    result = Sum (Sum (Literal $ Whole 2) (Product (Literal $ Whole 3)
+        (Literal $ Whole 4))) (Literal $ Whole 5)
     program = " 2 + 3   * 4  +  5   "
 
 expr2 :: Assertion
