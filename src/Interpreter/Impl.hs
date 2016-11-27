@@ -14,7 +14,10 @@ interpret (Product e1 e2) = do
 interpret (Fraction e1 e2) = do
     a <- interpret e1
     b <- interpret e2
-    return $ a / b
+
+    if b /= (Whole 0)
+    then return $ a / b
+    else Left $ "Divide by zero"
 interpret (Minus e1 e2) = do
     a <- interpret e1
     b <- interpret e2

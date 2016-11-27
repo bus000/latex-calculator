@@ -20,6 +20,7 @@ unitTests = testGroup "Unit tests"
     , testCase "product2" product2
 
     , testCase "fractional1" fractional1
+    , testCase "fractional2" fractional2
 
     , testCase "minus1" minus1
     , testCase "minus2" minus2
@@ -57,6 +58,11 @@ fractional1 = Right (Real 2.5) @=? interpret tree
   where
     tree = Fraction (Literal $ Whole 10)
         (Fraction (Literal $ Whole 2) (Literal $ Real 0.5))
+
+fractional2 :: Assertion
+fractional2 = Left "Divide by zero" @=? interpret tree
+  where
+    tree = Fraction (Literal $ Whole 5) (Literal $ Whole 0)
 
 minus1 :: Assertion
 minus1 = Right (Whole 10) @=? interpret tree
