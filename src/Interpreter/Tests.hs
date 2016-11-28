@@ -30,6 +30,9 @@ unitTests = testGroup "Unit tests"
 
     , testCase "power1" power1
     , testCase "power2" power2
+
+    , testCase "binom1" binom1
+    , testCase "binom2" binom2
     ]
 
 sum1 :: Assertion
@@ -101,5 +104,28 @@ power2 = Right (Real 15625) @=? interpret tree
     tree = Power (Literal $ Whole 5)
         (Power (Literal $ Real 6) (Literal $ Whole 1))
 
+binom1 :: Assertion
+binom1 = Right (Whole 252) @=? interpret tree
+  where
+    tree = Binomial ten five
+
+binom2 :: Assertion
+binom2 = Left "Can only take binomials of integers" @=? interpret tree
+  where
+    tree = Binomial ten (Literal $ Real 5)
+
 main :: IO ()
 main = defaultMain $ testGroup "Interpreter Tests" [ unitTests ]
+
+zero, one, two, three, four, five, six, seven, eight, nine, ten :: Expr
+zero = Literal $ Whole 0
+one = Literal $ Whole 1
+two = Literal $ Whole 2
+three = Literal $ Whole 3
+four = Literal $ Whole 4
+five = Literal $ Whole 5
+six = Literal $ Whole 6
+seven = Literal $ Whole 7
+eight = Literal $ Whole 8
+nine = Literal $ Whole 9
+ten = Literal $ Whole 10

@@ -1,6 +1,9 @@
 module Interpreter.Impl where
 
 import ASTree
+import Math.Combinatorics.Exact.Binomial
+    ( choose
+    )
 
 interpret :: Expr -> Either String Number
 interpret (Sum e1 e2) = do
@@ -42,9 +45,15 @@ interpret (Power e1 e2) = do
         (Whole n1, Real d2) -> return $ Real (fromIntegral n1**d2)
         (Real d1, Real d2) -> return $ Real (d1**d2)
 
-interpret (Literal num) = return num
+interpret (Binomial e1 e2) = do
+    a <- interpret e1
+    b <- interpret e2
 
--- TODO: implement support for \binom as haskell has a choose function
+    case (a, b) of
+        (Whole n, Whole k) -> return $ Whole (n `choose` k)
+        _ -> Left "Can only take binomials of integers"
+
+interpret (Literal num) = return num
 
 fact :: Integer -> Integer
 fact 0 = 1

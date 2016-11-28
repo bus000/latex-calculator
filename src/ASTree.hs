@@ -8,6 +8,7 @@ data Expr
     | Factorial Expr
     | Power Expr Expr
     | Literal Number
+    | Binomial Expr Expr
     deriving (Show, Eq)
 
 data Number = Real Double | Whole Integer
