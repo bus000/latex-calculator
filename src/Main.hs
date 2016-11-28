@@ -19,7 +19,7 @@ main = do
 
     case args of
         [str] -> runProgram str
-        _ -> getLine >>= line -> runProgram line
+        _ -> getLine >>= \line -> runProgram line
 
 runProgram :: String -> IO ()
 runProgram p = case parseInterpret p of
