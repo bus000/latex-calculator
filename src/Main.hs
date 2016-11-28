@@ -22,11 +22,6 @@ main = do
         _ -> getLine >>= \line -> runProgram line
 
 runProgram :: String -> IO ()
-runProgram p = case parseInterpret p of
+runProgram p = case parseString p >>= interpret of
     Left err -> putStrLn err
     Right res -> print res
-
-parseInterpret :: String -> Either String Number
-parseInterpret p = do
-    program <- parseString p
-    interpret program
