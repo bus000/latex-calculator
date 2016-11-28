@@ -27,6 +27,9 @@ unitTests = testGroup "Unit tests"
 
     , testCase "factorial1" factorial1
     , testCase "factorial2" factorial2
+
+    , testCase "power1" power1
+    , testCase "power2" power2
     ]
 
 sum1 :: Assertion
@@ -85,6 +88,18 @@ factorial2 :: Assertion
 factorial2 = Left "Factorial of real 5.0" @=? interpret tree
   where
     tree = Factorial (Product (Literal $ Whole 5) (Literal $ Real 1))
+
+power1 :: Assertion
+power1 = Right (Whole 15625) @=? interpret tree
+  where
+    tree = Power (Literal $ Whole 5)
+        (Power (Literal $ Whole 6) (Literal $ Whole 1))
+
+power2 :: Assertion
+power2 = Right (Real 15625) @=? interpret tree
+  where
+    tree = Power (Literal $ Whole 5)
+        (Power (Literal $ Real 6) (Literal $ Whole 1))
 
 main :: IO ()
 main = defaultMain $ testGroup "Interpreter Tests" [ unitTests ]

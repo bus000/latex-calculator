@@ -6,6 +6,7 @@ data Expr
     | Fraction Expr Expr
     | Minus Expr Expr
     | Factorial Expr
+    | Power Expr Expr
     | Literal Number
     deriving (Show, Eq)
 
