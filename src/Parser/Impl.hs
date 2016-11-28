@@ -7,6 +7,7 @@ import ASTree
 import Text.ParserCombinators.ReadP
     ( ReadP
     , readP_to_S
+    , optional
     , eof
     , char
     , munch
@@ -47,7 +48,7 @@ parseExpr1 :: ReadP Expr
 parseExpr1 = parseExpr2 `chainl1` mult
   where
     mult = mult1 <|> mult2 <|> mult3
-    mult1 = infixOp "*" Product
+    mult1 = token (optional $ char '*') >> return Product
     mult2 = infixOp "\\cdot" Product
     mult3 = infixOp "\\times" Product
 
