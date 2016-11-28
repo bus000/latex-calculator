@@ -52,7 +52,7 @@ parseExpr1 = parseExpr2 `chainl1` mult
     mult3 = infixOp "\\times" Product
 
 parseExpr2 :: ReadP Expr
-parseExpr2 = fact <++ parseExpr3 <++ divi
+parseExpr2 = fact <|> parseExpr3 <|> divi <|> pow
   where
     divi = do
         _ <- string "\\frac"
@@ -64,7 +64,15 @@ parseExpr2 = fact <++ parseExpr3 <++ divi
     fact = do
         expr <- token parseExpr3
         _ <- char '!'
+
         return $ Factorial expr
+
+    pow = do
+        expr1 <- token parseExpr3
+        _ <- char '^'
+        expr2 <- parseExpr3
+
+        return $ Power expr1 expr2
 
 parseExpr3 :: ReadP Expr
 parseExpr3 = real <++ whole <++ bracket

@@ -41,6 +41,7 @@ unitTests = testGroup "Unit tests"
     , testCase "expr7" expr7
     , testCase "expr8" expr8
     , testCase "expr9" expr9
+    , testCase "expr10" expr10
     ]
 
 literal1 :: Assertion
@@ -94,9 +95,9 @@ fraction2 = assertBool "" $ result `elem` readP_to_S parseExpr2 program
     program = "\\frac  { 10\t}   {  20 }  "
 
 factorial1 :: Assertion
-factorial1 = result @=? readP_to_S parseExpr2 program
+factorial1 = assertBool ""$  result `elem` readP_to_S parseExpr2 program
   where
-    result = [(Factorial (Literal $ Whole 5), "")]
+    result = (Factorial (Literal $ Whole 5), "")
     program = "5!"
 
 factorial2 :: Assertion
@@ -169,6 +170,13 @@ expr9 = Right result @=? parseString program
     result = Minus (Literal $ Whole 1)
         (Fraction (Literal $ Whole 1) (Literal $ Whole 2))
     program = "1 - \\left( \\frac{1}{2} \\right)\n"
+
+expr10 :: Assertion
+expr10 = Right result @=? parseString program
+  where
+    result = Power two (Power two two)
+    two = Literal $ Whole 2
+    program = "2\t^(2 ^   \n 2)\n"
 
 main :: IO ()
 main = defaultMain $ testGroup "Parser Tests" [ unitTests ]
