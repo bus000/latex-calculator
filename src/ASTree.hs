@@ -105,3 +105,14 @@ toReal (Whole n) = Real $ fromIntegral n
 toReal (Real d) = Real d
 toReal (Ratio r) =
     Real $ (fromIntegral $ numerator r) / (fromIntegral $ denominator r)
+
+pow :: Number -> Number -> Number
+pow (Whole n1) (Whole n2) = Whole (n1^n2)
+pow (Whole n1) (Real n2) = Real (fromIntegral n1**n2)
+pow (Whole n1) (Ratio n2) = toReal (Whole n1) `pow` toReal (Ratio n2)
+pow (Real n1) (Whole n2) = Real $ n1^n2
+pow (Real n1) (Real n2) = Real $ n1**n2
+pow (Real n1) (Ratio n2) = Real n1 `pow` toReal (Ratio n2)
+pow (Ratio n1) (Whole n2) = toReal (Ratio n1) `pow` Whole n2
+pow (Ratio n1) (Real n2) = toReal (Ratio n1) `pow` Real n2
+pow (Ratio n1) (Ratio n2) = toReal (Ratio n1) `pow` toReal (Ratio n2)

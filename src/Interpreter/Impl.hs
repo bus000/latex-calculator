@@ -39,11 +39,7 @@ interpret (Power e1 e2) = do
     a <- interpret e1
     b <- interpret e2
 
-    case (a, b) of
-        (Whole n1, Whole n2) -> return $ Whole (n1^n2)
-        (Real d1, Whole n2) -> return $ Real (d1^n2)
-        (Whole n1, Real d2) -> return $ Real (fromIntegral n1**d2)
-        (Real d1, Real d2) -> return $ Real (d1**d2)
+    return $ a `pow` b
 
 interpret (Binomial e1 e2) = do
     a <- interpret e1

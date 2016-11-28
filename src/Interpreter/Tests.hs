@@ -27,6 +27,7 @@ unitTests = testGroup "Unit tests"
 
     , testCase "factorial1" factorial1
     , testCase "factorial2" factorial2
+    , testCase "factorial3" factorial3
 
     , testCase "power1" power1
     , testCase "power2" power2
@@ -91,6 +92,11 @@ factorial2 :: Assertion
 factorial2 = Left "Factorial of real 5.0" @=? interpret tree
   where
     tree = Factorial (Product (Literal $ Whole 5) (Literal $ Real 1))
+
+factorial3 :: Assertion
+factorial3 = Right (Real 0.70710678118) @=? interpret tree
+  where
+    tree = Power (Fraction one two) (Fraction one two)
 
 power1 :: Assertion
 power1 = Right (Whole 15625) @=? interpret tree
