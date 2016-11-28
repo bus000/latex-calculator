@@ -96,9 +96,10 @@ parseExpr3 = real <++ whole <++ bracket
 
         return $ Literal (Whole $ read (minus:first:digits))
 
-    bracket = bracket1 <|> bracket2
+    bracket = bracket1 <|> bracket2 <|> bracket3
     bracket1 = parseBracket (char '(') (char ')')
     bracket2 = parseBracket (string "\\left(") (string "\\right)")
+    bracket3 = parseBracket (char '{') (char '}')
     parseBracket s e = between (token s) (token e) parseExpr0
 
 infixOp :: String -> (a -> a -> a) -> ReadP (a -> a -> a)

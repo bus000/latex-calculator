@@ -42,6 +42,7 @@ unitTests = testGroup "Unit tests"
     , testCase "expr8" expr8
     , testCase "expr9" expr9
     , testCase "expr10" expr10
+    , testCase "expr11" expr11
     ]
 
 literal1 :: Assertion
@@ -178,5 +179,26 @@ expr10 = Right result @=? parseString program
     two = Literal $ Whole 2
     program = "2\t^(2 ^   \n 2)\n"
 
+expr11 :: Assertion
+expr11 = Right result @=? parseString program
+  where
+    result = Power base exponent
+    program = "\\left( \\frac{1}{2} \\right)^{10}"
+    base = Fraction one two
+    exponent = ten
+
 main :: IO ()
 main = defaultMain $ testGroup "Parser Tests" [ unitTests ]
+
+zero, one, two, three, four, five, six, seven, eight, nine, ten :: Expr
+zero = Literal $ Whole 0
+one = Literal $ Whole 1
+two = Literal $ Whole 2
+three = Literal $ Whole 3
+four = Literal $ Whole 4
+five = Literal $ Whole 5
+six = Literal $ Whole 6
+seven = Literal $ Whole 7
+eight = Literal $ Whole 8
+nine = Literal $ Whole 9
+ten = Literal $ Whole 10
