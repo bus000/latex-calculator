@@ -44,7 +44,7 @@ instance Num Number where
     (Real d1) + (Real d2) = Real $ d1 + d2
     (Real d1) + (Ratio r1) = Real d1 + toReal (Ratio r1)
     (Ratio r1) + (Whole i2) = Ratio r1 + Ratio (i2 % i2)
-    (Ratio r1) + (Real d2) = toReal (Ratio r1) + (Real d2)
+    (Ratio r1) + (Real d2) = toReal (Ratio r1) + Real d2
     (Ratio r1) + (Ratio r2) = Ratio $ r1 + r2
 
     (Whole i1) * (Whole i2) = Whole $ i1 * i2
@@ -104,7 +104,7 @@ toReal :: Number -> Number
 toReal (Whole n) = Real $ fromIntegral n
 toReal (Real d) = Real d
 toReal (Ratio r) =
-    Real $ (fromIntegral $ numerator r) / (fromIntegral $ denominator r)
+    Real $ fromIntegral (numerator r) / fromIntegral (denominator r)
 
 pow :: Number -> Number -> Number
 pow (Whole n1) (Whole n2) = Whole (n1^n2) -- TODO: fails on negative n2.

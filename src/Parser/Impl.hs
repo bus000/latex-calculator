@@ -4,6 +4,9 @@ import Control.Applicative
     ( (<|>)
     )
 import ASTree
+    ( Number(..)
+    , Expr(..)
+    )
 import Text.ParserCombinators.ReadP
     ( ReadP
     , readP_to_S

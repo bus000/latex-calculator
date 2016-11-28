@@ -9,9 +9,6 @@ import Parser.Impl
 import Interpreter.Impl
     ( interpret
     )
-import ASTree
-    ( Number
-    )
 
 main :: IO ()
 main = do

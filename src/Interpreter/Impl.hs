@@ -31,7 +31,7 @@ interpret (Minus e1 e2) = do
 
 interpret (Factorial e) = do
     a <- interpret e
-    case a of
+    case a of -- TODO: pattern matches are non exhaustive.
         Whole n -> return $ Whole (fact n)
         Real r -> Left $ "Factorial of real " ++ show r
 
