@@ -168,7 +168,7 @@ expr9 = Right result @=? parseString program
   where
     result = Minus (Literal $ Whole 1)
         (Fraction (Literal $ Whole 1) (Literal $ Whole 2))
-    program = "1 - \\left( \\frac{1}{2} \\right)"
+    program = "1 - \\left( \\frac{1}{2} \\right)\n"
 
 main :: IO ()
 main = defaultMain $ testGroup "Parser Tests" [ unitTests ]
