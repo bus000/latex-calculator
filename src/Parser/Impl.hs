@@ -52,7 +52,7 @@ parseExpr1 = parseExpr2 `chainl1` mult
     mult3 = infixOp "\\times" Product
 
 parseExpr2 :: ReadP Expr
-parseExpr2 = fact <|> parseExpr3 <|> divi <|> pow
+parseExpr2 = fact <|> parseExpr3 <|> divi <|> pow <|> binom
   where
     divi = do
         _ <- string "\\frac"
@@ -73,6 +73,14 @@ parseExpr2 = fact <|> parseExpr3 <|> divi <|> pow
         expr2 <- parseExpr3
 
         return $ Power expr1 expr2
+
+    binom = do
+        _ <- token $ string "\\binom"
+        expr1 <- between (token $ char '{') (token $ char '}') parseExpr0
+        expr2 <- between (token $ char '{') (token $ char '}') parseExpr0
+
+        return $ Binomial expr1 expr2
+
 
 parseExpr3 :: ReadP Expr
 parseExpr3 = real <++ whole <++ bracket

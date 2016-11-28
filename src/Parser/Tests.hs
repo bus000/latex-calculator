@@ -43,6 +43,7 @@ unitTests = testGroup "Unit tests"
     , testCase "expr9" expr9
     , testCase "expr10" expr10
     , testCase "expr11" expr11
+    , testCase "expr12" expr12
     ]
 
 literal1 :: Assertion
@@ -179,6 +180,12 @@ expr11 = Right result @=? parseString program
     program = "\\left( \\frac{1}{2} \\right)^{10}"
     base = Fraction one two
     exponent = ten
+
+expr12 :: Assertion
+expr12 = Right result @=? parseString program
+  where
+    result = Binomial ten five
+    program = "\\binom{10}{5}"
 
 main :: IO ()
 main = defaultMain $ testGroup "Parser Tests" [ unitTests ]
