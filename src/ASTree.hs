@@ -1,5 +1,12 @@
 module ASTree where
 
+import Data.Ratio
+    ( (%)
+    , Rational
+    , numerator
+    , denominator
+    )
+
 data Expr
     = Sum Expr Expr
     | Product Expr Expr
@@ -11,52 +18,90 @@ data Expr
     | Binomial Expr Expr
     deriving (Show, Eq)
 
-data Number = Real Double | Whole Integer
+data Number = Real Double | Whole Integer | Ratio Rational
 
 epsilon :: Double
 epsilon = 0.000001
 
 instance Eq Number where
     (Whole i1) == (Whole i2) = i1 == i2
-    (Whole i1) == (Real d1) = (Real $ fromIntegral i1) == Real d1
-    (Real d1) == (Whole i1) = Real d1 == (Real $ fromIntegral i1)
+    (Whole i1) == (Real d1) = toReal (Whole i1) == Real d1
+    (Whole i1) == (Ratio r1) = Ratio (i1 % i1) == Ratio r1
+
+    (Real d1) == (Whole i1) = Real d1 == toReal (Whole i1)
     (Real d1) == (Real d2) = abs (d1 - d2) < epsilon
+    (Real d1) == (Ratio r1) = Real d1 == toReal (Ratio r1)
+
+    (Ratio r) == (Whole i) = Ratio r == Ratio (i % i)
+    (Ratio r) == (Real d) = toReal (Ratio r) == Real d
+    (Ratio r1) == (Ratio r2) = r1 == r2
 
 instance Num Number where
     (Whole i1) + (Whole i2) = Whole $ i1 + i2
     (Whole i1) + (Real d1) = Real $ fromIntegral i1 + d1
+    (Whole i1) + (Ratio r1) = Ratio (i1 % i1) + Ratio r1
     (Real d1) + (Whole i1) = Real $ d1 + fromIntegral i1
     (Real d1) + (Real d2) = Real $ d1 + d2
+    (Real d1) + (Ratio r1) = Real d1 + toReal (Ratio r1)
+    (Ratio r1) + (Whole i2) = Ratio r1 + Ratio (i2 % i2)
+    (Ratio r1) + (Real d2) = toReal (Ratio r1) + (Real d2)
+    (Ratio r1) + (Ratio r2) = Ratio $ r1 + r2
 
     (Whole i1) * (Whole i2) = Whole $ i1 * i2
     (Whole i1) * (Real d1) = Real $ fromIntegral i1 * d1
+    (Whole i1) * (Ratio r1) = Ratio (i1 % i1) * Ratio r1
     (Real d1) * (Whole i1) = Real $ d1 * fromIntegral i1
     (Real d1) * (Real d2) = Real $ d1 * d2
+    (Real d1) * (Ratio r1) = Real d1 * toReal (Ratio r1)
+    (Ratio r1) * (Whole i2) = Ratio r1 * Ratio (i2 % i2)
+    (Ratio r1) * (Real d2) = toReal (Ratio r1) * Real d2
+    (Ratio r1) * (Ratio r2) = Ratio $ r1 * r2
 
     (Whole i1) - (Whole i2) = Whole $ i1 - i2
     (Whole i1) - (Real d1) = Real $ fromIntegral i1 - d1
+    (Whole i1) - (Ratio r1) = Ratio (i1 % i1) - Ratio r1
     (Real d1) - (Whole i1) = Real $ d1 - fromIntegral i1
     (Real d1) - (Real d2) = Real $ d1 - d2
+    (Real d1) - (Ratio r1) = Real d1 - toReal (Ratio r1)
+    (Ratio r1) - (Whole i2) = Ratio r1 - Ratio (i2 % i2)
+    (Ratio r1) - (Real d2) = toReal (Ratio r1) - Real d2
+    (Ratio r1) - (Ratio r2) = Ratio $ r1 - r2
 
     abs (Whole i) = Whole $ abs i
     abs (Real d) = Real $ abs d
+    abs (Ratio r) = Ratio $ abs r
 
     signum (Whole i) = Whole $ signum i
     signum (Real d) = Real $ signum d
+    signum (Ratio r) = Ratio $ signum r
 
     fromInteger = Whole
 
     negate (Whole i) = Whole $ negate i
     negate (Real d) = Real $ negate d
+    negate (Ratio r) = Ratio $ negate r
 
 instance Fractional Number where
-    (Whole i1) / (Whole i2) = (Real $ fromIntegral i1) / (Real $ fromIntegral i2)
+    (Whole i1) / (Whole i2) = Ratio (i1 % i2)
     (Whole i1) / (Real d1) = (Real $ fromIntegral i1) / Real d1
+    (Whole i1) / (Ratio r1) = Ratio (i1 % i1) / Ratio r1
     (Real d1) / (Whole i1) = Real d1 / (Real $ fromIntegral i1)
     (Real d1) / (Real d2) = Real $ d1 / d2
+    (Real d1) / (Ratio r1) = Real d1 / toReal (Ratio r1)
+    (Ratio r1) / (Whole i2) = Ratio r1 / Ratio (i2 % i2)
+    (Ratio r1) / (Real d2) = toReal (Ratio r1) / Real d2
+    (Ratio r1) / (Ratio r2) = Ratio (r1 / r2)
 
     fromRational r = Real $ fromRational r
 
 instance Show Number where
     show (Real d) = show d
     show (Whole n) = show n
+    show (Ratio r) =
+        "\\frac{" ++ show (numerator r) ++ "}{" ++ show (denominator r) ++ "}"
+
+toReal :: Number -> Number
+toReal (Whole n) = Real $ fromIntegral n
+toReal (Real d) = Real d
+toReal (Ratio r) =
+    Real $ (fromIntegral $ numerator r) / (fromIntegral $ denominator r)
