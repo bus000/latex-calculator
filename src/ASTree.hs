@@ -26,44 +26,44 @@ epsilon = 0.000001
 instance Eq Number where
     (Whole i1) == (Whole i2) = i1 == i2
     (Whole i1) == (Real d1) = toReal (Whole i1) == Real d1
-    (Whole i1) == (Ratio r1) = Ratio (i1 % i1) == Ratio r1
+    (Whole i1) == (Ratio r1) = Ratio (i1 % 1) == Ratio r1
 
     (Real d1) == (Whole i1) = Real d1 == toReal (Whole i1)
     (Real d1) == (Real d2) = abs (d1 - d2) < epsilon
     (Real d1) == (Ratio r1) = Real d1 == toReal (Ratio r1)
 
-    (Ratio r) == (Whole i) = Ratio r == Ratio (i % i)
+    (Ratio r) == (Whole i) = Ratio r == Ratio (i % 1)
     (Ratio r) == (Real d) = toReal (Ratio r) == Real d
     (Ratio r1) == (Ratio r2) = r1 == r2
 
 instance Num Number where
     (Whole i1) + (Whole i2) = Whole $ i1 + i2
     (Whole i1) + (Real d1) = Real $ fromIntegral i1 + d1
-    (Whole i1) + (Ratio r1) = Ratio (i1 % i1) + Ratio r1
+    (Whole i1) + (Ratio r1) = Ratio (i1 % 1) + Ratio r1
     (Real d1) + (Whole i1) = Real $ d1 + fromIntegral i1
     (Real d1) + (Real d2) = Real $ d1 + d2
     (Real d1) + (Ratio r1) = Real d1 + toReal (Ratio r1)
-    (Ratio r1) + (Whole i2) = Ratio r1 + Ratio (i2 % i2)
+    (Ratio r1) + (Whole i2) = Ratio r1 + Ratio (i2 % 1)
     (Ratio r1) + (Real d2) = toReal (Ratio r1) + Real d2
     (Ratio r1) + (Ratio r2) = Ratio $ r1 + r2
 
     (Whole i1) * (Whole i2) = Whole $ i1 * i2
     (Whole i1) * (Real d1) = Real $ fromIntegral i1 * d1
-    (Whole i1) * (Ratio r1) = Ratio (i1 % i1) * Ratio r1
+    (Whole i1) * (Ratio r1) = Ratio (i1 % 1) * Ratio r1
     (Real d1) * (Whole i1) = Real $ d1 * fromIntegral i1
     (Real d1) * (Real d2) = Real $ d1 * d2
     (Real d1) * (Ratio r1) = Real d1 * toReal (Ratio r1)
-    (Ratio r1) * (Whole i2) = Ratio r1 * Ratio (i2 % i2)
+    (Ratio r1) * (Whole i2) = Ratio r1 * Ratio (i2 % 1)
     (Ratio r1) * (Real d2) = toReal (Ratio r1) * Real d2
     (Ratio r1) * (Ratio r2) = Ratio $ r1 * r2
 
     (Whole i1) - (Whole i2) = Whole $ i1 - i2
     (Whole i1) - (Real d1) = Real $ fromIntegral i1 - d1
-    (Whole i1) - (Ratio r1) = Ratio (i1 % i1) - Ratio r1
+    (Whole i1) - (Ratio r1) = Ratio (i1 % 1) - Ratio r1
     (Real d1) - (Whole i1) = Real $ d1 - fromIntegral i1
     (Real d1) - (Real d2) = Real $ d1 - d2
     (Real d1) - (Ratio r1) = Real d1 - toReal (Ratio r1)
-    (Ratio r1) - (Whole i2) = Ratio r1 - Ratio (i2 % i2)
+    (Ratio r1) - (Whole i2) = Ratio r1 - Ratio (i2 % 1)
     (Ratio r1) - (Real d2) = toReal (Ratio r1) - Real d2
     (Ratio r1) - (Ratio r2) = Ratio $ r1 - r2
 
@@ -84,11 +84,11 @@ instance Num Number where
 instance Fractional Number where
     (Whole i1) / (Whole i2) = Ratio (i1 % i2)
     (Whole i1) / (Real d1) = (Real $ fromIntegral i1) / Real d1
-    (Whole i1) / (Ratio r1) = Ratio (i1 % i1) / Ratio r1
+    (Whole i1) / (Ratio r1) = Ratio (i1 % 1) / Ratio r1
     (Real d1) / (Whole i1) = Real d1 / (Real $ fromIntegral i1)
     (Real d1) / (Real d2) = Real $ d1 / d2
     (Real d1) / (Ratio r1) = Real d1 / toReal (Ratio r1)
-    (Ratio r1) / (Whole i2) = Ratio r1 / Ratio (i2 % i2)
+    (Ratio r1) / (Whole i2) = Ratio r1 / Ratio (i2 % 1)
     (Ratio r1) / (Real d2) = toReal (Ratio r1) / Real d2
     (Ratio r1) / (Ratio r2) = Ratio (r1 / r2)
 
