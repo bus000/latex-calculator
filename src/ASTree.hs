@@ -95,10 +95,15 @@ instance Fractional Number where
     fromRational r = Real $ fromRational r
 
 instance Show Number where
-    show (Real d) = show d
-    show (Whole n) = show n
-    show (Ratio r) =
-        "\\frac{" ++ show (numerator r) ++ "}{" ++ show (denominator r) ++ "}"
+    show n = myShow $ simplify n
+
+myShow :: Number -> String
+myShow (Real d) = show d
+myShow (Whole n) = show n
+myShow (Ratio r) = "\\frac{" ++ show n ++ "}{" ++ show d ++ "}"
+  where
+    n = numerator r
+    d = denominator r
 
 toReal :: Number -> Number
 toReal (Whole n) = Real $ fromIntegral n
@@ -116,3 +121,10 @@ pow (Real n1) (Ratio n2) = Real n1 `pow` toReal (Ratio n2)
 pow (Ratio n1) (Whole n2) = Ratio $ n1^^n2
 pow (Ratio n1) (Real n2) = toReal (Ratio n1) `pow` Real n2
 pow (Ratio n1) (Ratio n2) = toReal (Ratio n1) `pow` toReal (Ratio n2)
+
+simplify :: Number -> Number
+simplify (Ratio r) = if n `mod` d == 0 then Whole (n `div` d) else Ratio r
+  where
+    n = numerator r
+    d = denominator r
+simplify n = n
