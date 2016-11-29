@@ -112,7 +112,9 @@ toReal (Ratio r) =
     Real $ fromIntegral (numerator r) / fromIntegral (denominator r)
 
 pow :: Number -> Number -> Number
-pow (Whole n1) (Whole n2) = Whole (n1^n2) -- TODO: fails on negative n2.
+pow (Whole n1) (Whole n2)
+    | n2 >= 0 = Whole (n1^n2)
+    | otherwise = (Real $ fromInteger n1) `pow` (Real $ fromInteger n2)
 pow (Whole n1) (Real n2) = Real (fromIntegral n1**n2)
 pow (Whole n1) (Ratio n2) = toReal (Whole n1) `pow` toReal (Ratio n2)
 pow (Real n1) (Whole n2) = Real $ n1^^n2
