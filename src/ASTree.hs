@@ -24,48 +24,26 @@ epsilon :: Double
 epsilon = 0.000001
 
 instance Eq Number where
-    (Whole i1) == (Whole i2) = i1 == i2
-    (Whole i1) == (Real d1) = toReal (Whole i1) == Real d1
-    (Whole i1) == (Ratio r1) = Ratio (i1 % 1) == Ratio r1
-
-    (Real d1) == (Whole i1) = Real d1 == toReal (Whole i1)
-    (Real d1) == (Real d2) = abs (d1 - d2) < epsilon
-    (Real d1) == (Ratio r1) = Real d1 == toReal (Ratio r1)
-
-    (Ratio r) == (Whole i) = Ratio r == Ratio (i % 1)
-    (Ratio r) == (Real d) = toReal (Ratio r) == Real d
-    (Ratio r1) == (Ratio r2) = r1 == r2
+    (Whole a) == (Whole b) = a == b
+    (Real a) == (Real b) = abs (a - b) < epsilon
+    (Ratio a) == (Ratio b) = a == b
+    a == b = let (a', b') = toSame (a, b) in a' == b'
 
 instance Num Number where
-    (Whole i1) + (Whole i2) = Whole $ i1 + i2
-    (Whole i1) + (Real d1) = Real $ fromIntegral i1 + d1
-    (Whole i1) + (Ratio r1) = Ratio (i1 % 1) + Ratio r1
-    (Real d1) + (Whole i1) = Real $ d1 + fromIntegral i1
-    (Real d1) + (Real d2) = Real $ d1 + d2
-    (Real d1) + (Ratio r1) = Real d1 + toReal (Ratio r1)
-    (Ratio r1) + (Whole i2) = Ratio r1 + Ratio (i2 % 1)
-    (Ratio r1) + (Real d2) = toReal (Ratio r1) + Real d2
-    (Ratio r1) + (Ratio r2) = Ratio $ r1 + r2
+    (Whole a) + (Whole b) = Whole $ a + b
+    (Real a) + (Real b) = Real $ a + b
+    (Ratio a) + (Ratio b) = Ratio $ a + b
+    a + b = let (a', b') = toSame (a, b) in a' + b'
 
-    (Whole i1) * (Whole i2) = Whole $ i1 * i2
-    (Whole i1) * (Real d1) = Real $ fromIntegral i1 * d1
-    (Whole i1) * (Ratio r1) = Ratio (i1 % 1) * Ratio r1
-    (Real d1) * (Whole i1) = Real $ d1 * fromIntegral i1
-    (Real d1) * (Real d2) = Real $ d1 * d2
-    (Real d1) * (Ratio r1) = Real d1 * toReal (Ratio r1)
-    (Ratio r1) * (Whole i2) = Ratio r1 * Ratio (i2 % 1)
-    (Ratio r1) * (Real d2) = toReal (Ratio r1) * Real d2
-    (Ratio r1) * (Ratio r2) = Ratio $ r1 * r2
+    (Whole a) * (Whole b) = Whole $ a * b
+    (Real a) * (Real b) = Real $ a * b
+    (Ratio a) * (Ratio b) = Ratio $ a * b
+    a * b = let (a', b') = toSame (a, b) in a' * b'
 
-    (Whole i1) - (Whole i2) = Whole $ i1 - i2
-    (Whole i1) - (Real d1) = Real $ fromIntegral i1 - d1
-    (Whole i1) - (Ratio r1) = Ratio (i1 % 1) - Ratio r1
-    (Real d1) - (Whole i1) = Real $ d1 - fromIntegral i1
-    (Real d1) - (Real d2) = Real $ d1 - d2
-    (Real d1) - (Ratio r1) = Real d1 - toReal (Ratio r1)
-    (Ratio r1) - (Whole i2) = Ratio r1 - Ratio (i2 % 1)
-    (Ratio r1) - (Real d2) = toReal (Ratio r1) - Real d2
-    (Ratio r1) - (Ratio r2) = Ratio $ r1 - r2
+    (Whole a) - (Whole b) = Whole $ a - b
+    (Real a) - (Real b) = Real $ a - b
+    (Ratio a) - (Ratio b) = Ratio $ a - b
+    a - b = let (a', b') = toSame (a, b) in a' - b'
 
     abs (Whole i) = Whole $ abs i
     abs (Real d) = Real $ abs d
@@ -82,15 +60,10 @@ instance Num Number where
     negate (Ratio r) = Ratio $ negate r
 
 instance Fractional Number where
-    (Whole i1) / (Whole i2) = Ratio (i1 % i2)
-    (Whole i1) / (Real d1) = (Real $ fromIntegral i1) / Real d1
-    (Whole i1) / (Ratio r1) = Ratio (i1 % 1) / Ratio r1
-    (Real d1) / (Whole i1) = Real d1 / (Real $ fromIntegral i1)
-    (Real d1) / (Real d2) = Real $ d1 / d2
-    (Real d1) / (Ratio r1) = Real d1 / toReal (Ratio r1)
-    (Ratio r1) / (Whole i2) = Ratio r1 / Ratio (i2 % 1)
-    (Ratio r1) / (Real d2) = toReal (Ratio r1) / Real d2
-    (Ratio r1) / (Ratio r2) = Ratio (r1 / r2)
+    (Whole a) / (Whole b) = Ratio (a % b)
+    (Real a) / (Real b) = Real $ a / b
+    (Ratio a) / (Ratio b) = Ratio (a / b)
+    a / b = let (a', b') = toSame (a, b) in a' / b'
 
     fromRational r = Real $ fromRational r
 
@@ -105,24 +78,29 @@ myShow (Ratio r) = "\\frac{" ++ show n ++ "}{" ++ show d ++ "}"
     n = numerator r
     d = denominator r
 
-toReal :: Number -> Number
-toReal (Whole n) = Real $ fromIntegral n
-toReal (Real d) = Real d
-toReal (Ratio r) =
-    Real $ fromIntegral (numerator r) / fromIntegral (denominator r)
+toSame :: (Number, Number) -> (Number, Number)
+toSame (n1, n2) = case (simplify n1, simplify n2) of
+    (Whole a, Whole b) -> (Whole a, Whole b)
+    (Whole a, Real b) -> (Real $ fromIntegral a, Real b)
+    (Whole a, Ratio b) -> (Ratio (a % 1), Ratio b)
+
+    (Real a, Whole b) -> (Real a, Real $ fromIntegral b)
+    (Real a, Real b) -> (Real a, Real b)
+    (Real a, Ratio b) -> (Real a, Real $ fromRational b)
+
+    (Ratio a, Whole b) -> (Ratio a, Ratio (b % 1))
+    (Ratio a, Real b) -> (Real $ fromRational a, Real b)
+    (Ratio a, Ratio b) -> (Ratio a, Ratio b)
 
 pow :: Number -> Number -> Number
-pow (Whole n1) (Whole n2)
-    | n2 >= 0 = Whole (n1^n2)
-    | otherwise = (Real $ fromInteger n1) `pow` (Real $ fromInteger n2)
-pow (Whole n1) (Real n2) = Real (fromIntegral n1**n2)
-pow (Whole n1) (Ratio n2) = toReal (Whole n1) `pow` toReal (Ratio n2)
-pow (Real n1) (Whole n2) = Real $ n1^^n2
-pow (Real n1) (Real n2) = Real $ n1**n2
-pow (Real n1) (Ratio n2) = Real n1 `pow` toReal (Ratio n2)
-pow (Ratio n1) (Whole n2) = Ratio $ n1^^n2
-pow (Ratio n1) (Real n2) = toReal (Ratio n1) `pow` Real n2
-pow (Ratio n1) (Ratio n2) = toReal (Ratio n1) `pow` toReal (Ratio n2)
+pow (Whole a) (Whole b)
+    | b >= 0 = Whole (a^b)
+    | otherwise = (Real $ fromInteger a) `pow` (Real $ fromInteger b)
+pow (Real a) (Whole b) = Real $ a^^b
+pow (Real a) (Real b) = Real $ a**b
+pow (Ratio a) (Whole b) = Ratio $ a^^b
+pow (Ratio a) (Ratio b) = Real (fromRational a) `pow` Real (fromRational b)
+pow a b = let (a', b') = toSame (a, b) in a' `pow` b'
 
 simplify :: Number -> Number
 simplify (Ratio r) = if n `mod` d == 0 then Whole (n `div` d) else Ratio r
