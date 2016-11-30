@@ -6,6 +6,7 @@ import Control.Applicative
 import ASTree
     ( Number(..)
     , Expr(..)
+    , LatCalError(..)
     )
 import Text.ParserCombinators.ReadP
     ( ReadP
@@ -26,12 +27,10 @@ import Data.Char
     ( isDigit
     )
 
-type ParseError = String
-
-parseString :: String -> Either String Expr
+parseString :: String -> Either LatCalError Expr
 parseString str = case readP_to_S parseExpr str of
     [(program, "")] -> Right program
-    _ -> Left "Parse error"
+    _ -> Left $ ParserError "Parse error"
 
 parseExpr :: ReadP Expr
 parseExpr = do

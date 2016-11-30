@@ -67,7 +67,7 @@ fractional1 = Right (Real 2.5) @=? interpret tree
         (Fraction (Literal $ Whole 2) (Literal $ Real 0.5))
 
 fractional2 :: Assertion
-fractional2 = Left "Divide by zero" @=? interpret tree
+fractional2 = Left DivideByZero @=? interpret tree
   where
     tree = Fraction (Literal $ Whole 5) (Literal $ Whole 0)
 
@@ -89,7 +89,7 @@ factorial1 = Right (Whole 120) @=? interpret tree
     tree = Factorial (Product (Literal $ Whole 5) (Literal $ Whole 1))
 
 factorial2 :: Assertion
-factorial2 = Left "Factorial of real 5.0" @=? interpret tree
+factorial2 = Left (TypeError "") @=? interpret tree
   where
     tree = Factorial (Product (Literal $ Whole 5) (Literal $ Real 1))
 
@@ -116,7 +116,7 @@ binom1 = Right (Whole 252) @=? interpret tree
     tree = Binomial ten five
 
 binom2 :: Assertion
-binom2 = Left "Can only take binomials of integers" @=? interpret tree
+binom2 = Left (TypeError "") @=? interpret tree
   where
     tree = Binomial ten (Literal $ Real 5)
 

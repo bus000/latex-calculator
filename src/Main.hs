@@ -20,5 +20,5 @@ main = do
 
 runProgram :: String -> IO ()
 runProgram p = case parseString p >>= interpret of
-    Left err -> putStrLn err
+    Left err -> print err
     Right res -> print res

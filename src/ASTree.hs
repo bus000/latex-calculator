@@ -130,3 +130,15 @@ simplify (Ratio r) = if n `mod` d == 0 then Whole (n `div` d) else Ratio r
     n = numerator r
     d = denominator r
 simplify n = n
+
+data LatCalError
+    = TypeError String
+    | DivideByZero
+    | ParserError String
+    deriving (Show)
+
+instance Eq LatCalError where
+    TypeError _ == TypeError _ = True
+    DivideByZero == DivideByZero = True
+    ParserError _ == ParserError _ = True
+    _ == _ = False

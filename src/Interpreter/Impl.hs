@@ -5,7 +5,7 @@ import Math.Combinatorics.Exact.Binomial
     ( choose
     )
 
-interpret :: Expr -> Either String Number
+interpret :: Expr -> Either LatCalError Number
 interpret (Sum e1 e2) = do
     a <- interpret e1
     b <- interpret e2
@@ -22,7 +22,7 @@ interpret (Fraction e1 e2) = do
 
     if b /= Whole 0
     then return $ a / b
-    else Left "Divide by zero"
+    else Left DivideByZero
 
 interpret (Minus e1 e2) = do
     a <- interpret e1
@@ -31,9 +31,9 @@ interpret (Minus e1 e2) = do
 
 interpret (Factorial e) = do
     a <- interpret e
-    case a of -- TODO: pattern matches are non exhaustive.
+    case simplify a of
         Whole n -> return $ Whole (fact n)
-        Real r -> Left $ "Factorial of real " ++ show r
+        _ -> Left $ TypeError "Factorial of non whole number"
 
 interpret (Power e1 e2) = do
     a <- interpret e1
@@ -45,9 +45,9 @@ interpret (Binomial e1 e2) = do
     a <- interpret e1
     b <- interpret e2
 
-    case (a, b) of
+    case (simplify a, simplify b) of
         (Whole n, Whole k) -> return $ Whole (n `choose` k)
-        _ -> Left "Can only take binomials of integers"
+        _ -> Left $ TypeError "Binomial of non whole number"
 
 interpret (Literal num) = return num
 
