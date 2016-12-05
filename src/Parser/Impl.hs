@@ -86,7 +86,7 @@ parseExpr2 = fact <|> parseExpr3 <|> divi <|> pow <|> binom
 
 
 parseExpr3 :: ReadP Expr
-parseExpr3 = real <++ whole <++ bracket
+parseExpr3 = real <++ whole <++ constant <++ bracket
   where
     real = token $ do
         minus <- option ' ' (char '-')
@@ -112,6 +112,10 @@ parseExpr3 = real <++ whole <++ bracket
     bracket2 = parseBracket (string "\\left(") (string "\\right)")
     bracket3 = parseBracket (char '{') (char '}')
     parseBracket s e = between (token s) (token e) parseExpr0
+
+    constant = pi' <|> euler
+    pi' = token (string "\\pi") >> return (Literal $ Real pi)
+    euler = token (char 'e') >> return (Literal $ Real (exp 1))
 
 infixOp :: String -> (a -> a -> a) -> ReadP (a -> a -> a)
 infixOp x f = token (string x) >> return f

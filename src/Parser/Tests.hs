@@ -45,6 +45,8 @@ unitTests = testGroup "Unit tests"
     , testCase "expr11" expr11
     , testCase "expr12" expr12
     , testCase "expr13" expr13
+    , testCase "expr14" expr14
+    , testCase "expr15" expr15
     ]
 
 literal1 :: Assertion
@@ -193,6 +195,23 @@ expr13 = Right result @=? parseString program
   where
     result = Product (Binomial ten five) (Power (Fraction one two) five)
     program = "\\binom{10}{5} \\left( \\frac{1}{2} \\right)^5"
+
+-- TODO: Implement support for constants pi, e ovs and unari minus
+expr14 :: Assertion
+expr14 = Right result @=? parseString program
+  where
+    result = undefined
+    program = "exp(-2 \\cdot 10 \\frac{1}{2}^2)"
+
+expr15 :: Assertion
+expr15 = Right result @=? parseString program
+  where
+    result = Product (Literal $ Real 2.718281) (Literal $ Real pi)
+    program = " e * \\pi "
+
+{-\binom{10}{9} \frac{1}{2}^9 \left(1 - \frac{1}{2} \right)^{10 - \frac{1}{2}} +-}
+{-\binom{10}{10} \frac{1}{2}^{10} \left(1 - \frac{1}{2} \right)^{10 - \frac{1}{2}}-}
+
 
 main :: IO ()
 main = defaultMain $ testGroup "Parser Tests" [ unitTests ]
