@@ -200,13 +200,15 @@ expr13 = Right result @=? parseString program
 expr14 :: Assertion
 expr14 = Right result @=? parseString program
   where
-    result = undefined
+    result = Power base exponent
+    base = Literal $ Real (exp 1)
+    exponent = Product (Negate two) (Product ten (Power (Fraction one two) two))
     program = "exp(-2 \\cdot 10 \\frac{1}{2}^2)"
 
 expr15 :: Assertion
 expr15 = Right result @=? parseString program
   where
-    result = Product (Literal $ Real 2.718281) (Literal $ Real pi)
+    result = Product (Literal $ Real 2.718281828459045) (Literal $ Real pi)
     program = " e * \\pi "
 
 {-\binom{10}{9} \frac{1}{2}^9 \left(1 - \frac{1}{2} \right)^{10 - \frac{1}{2}} +-}

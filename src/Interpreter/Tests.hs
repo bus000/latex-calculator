@@ -94,7 +94,7 @@ factorial2 = Left (TypeError "") @=? interpret tree
     tree = Factorial (Product (Literal $ Whole 5) (Literal $ Real 1))
 
 factorial3 :: Assertion
-factorial3 = Right (Real 0.70710678118) @=? interpret tree
+factorial3 = Right (Real 0.7071067811865476) @=? interpret tree
   where
     tree = Power (Fraction one two) (Fraction one two)
 

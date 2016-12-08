@@ -6,6 +6,9 @@ import Data.Ratio
     , numerator
     , denominator
     )
+import Numeric.IEEE
+    ( epsilon
+    )
 
 data Expr
     = Sum Expr Expr
@@ -19,9 +22,6 @@ data Expr
     deriving (Show, Eq)
 
 data Number = Real Double | Whole Integer | Ratio Rational
-
-epsilon :: Double
-epsilon = 0.000001
 
 instance Eq Number where
     (Whole a) == (Whole b) = a == b
