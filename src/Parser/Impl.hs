@@ -55,7 +55,12 @@ parseExpr1 = parseExpr2 `chainl1` mult
     mult3 = infixOp "\\times" Product
 
 parseExpr2 :: ReadP Expr
-parseExpr2 = fact <|> parseExpr3 <|> divi <|> pow <|> binom
+parseExpr2 = parseExpr3 `chainl1` pow
+  where
+    pow = infixOp "^" Power
+
+parseExpr3 :: ReadP Expr
+parseExpr3 = fact <|> parseExpr4 <|> divi <|> binom <|> exponent -- <|> neg
   where
     divi = do
         _ <- string "\\frac"
@@ -65,15 +70,15 @@ parseExpr2 = fact <|> parseExpr3 <|> divi <|> pow <|> binom
         return $ Fraction expr1 expr2
 
     fact = do
-        expr <- token parseExpr3
+        expr <- token parseExpr4
         _ <- char '!'
 
         return $ Factorial expr
 
     pow = do
-        expr1 <- token parseExpr3
+        expr1 <- token parseExpr4
         _ <- char '^'
-        expr2 <- parseExpr3
+        expr2 <- parseExpr4
 
         return $ Power expr1 expr2
 
@@ -84,11 +89,17 @@ parseExpr2 = fact <|> parseExpr3 <|> divi <|> pow <|> binom
 
         return $ Binomial expr1 expr2
 
+    exponent = do
+        _ <- token $ string "exp"
+        expr <- between (token $ char '(') (token $ char ')') parseExpr0
 
-parseExpr3 :: ReadP Expr
-parseExpr3 = real <++ whole <++ constant <++ bracket
+        return $ Power (Literal $ Real (exp 1)) expr
+
+parseExpr4 :: ReadP Expr
+parseExpr4 = real <++ whole <++ constant <++ bracket
   where
     real = token $ do
+        skipSpaces
         minus <- option ' ' (char '-')
         first <- satisfy (`elem` ['0'..'9'])
         digits1 <- munch isDigit

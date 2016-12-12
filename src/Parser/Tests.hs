@@ -47,6 +47,8 @@ unitTests = testGroup "Unit tests"
     , testCase "expr13" expr13
     , testCase "expr14" expr14
     , testCase "expr15" expr15
+    , testCase "expr16" expr16
+    , testCase "expr17" expr17
     ]
 
 literal1 :: Assertion
@@ -196,20 +198,32 @@ expr13 = Right result @=? parseString program
     result = Product (Binomial ten five) (Power (Fraction one two) five)
     program = "\\binom{10}{5} \\left( \\frac{1}{2} \\right)^5"
 
--- TODO: Implement support for constants pi, e ovs and unari minus
 expr14 :: Assertion
 expr14 = Right result @=? parseString program
   where
     result = Power base exponent
     base = Literal $ Real (exp 1)
-    exponent = Product (Negate two) (Product ten (Power (Fraction one two) two))
-    program = "exp(-2 \\cdot 10 \\frac{1}{2}^2)"
+    exponent = Product (Product (Literal $ Whole (-10)) ten)
+        (Power (Fraction one two) two)
+    program = "exp(-10 \\cdot 10 \\frac{1}{2}^2)"
 
 expr15 :: Assertion
 expr15 = Right result @=? parseString program
   where
     result = Product (Literal $ Real 2.718281828459045) (Literal $ Real pi)
     program = " e * \\pi "
+
+expr16 :: Assertion
+expr16 = Right result @=? parseString program
+  where
+    result = Power (Literal $ Real (exp 1)) (Product two four)
+    program = " exp  ( \n \t 2 \\times 4 \n )\n  "
+
+expr17 :: Assertion
+expr17 = Right result @=? parseString program
+  where
+    result = Literal $ Whole (-10)
+    program = " -10"
 
 {-\binom{10}{9} \frac{1}{2}^9 \left(1 - \frac{1}{2} \right)^{10 - \frac{1}{2}} +-}
 {-\binom{10}{10} \frac{1}{2}^{10} \left(1 - \frac{1}{2} \right)^{10 - \frac{1}{2}}-}
