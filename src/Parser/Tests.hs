@@ -49,6 +49,8 @@ unitTests = testGroup "Unit tests"
     , testCase "expr15" expr15
     , testCase "expr16" expr16
     , testCase "expr17" expr17
+    , testCase "expr18" expr18
+    , testCase "expr19" expr19
     ]
 
 literal1 :: Assertion
@@ -225,9 +227,17 @@ expr17 = Right result @=? parseString program
     result = Literal $ Whole (-10)
     program = " -10"
 
-{-\binom{10}{9} \frac{1}{2}^9 \left(1 - \frac{1}{2} \right)^{10 - \frac{1}{2}} +-}
-{-\binom{10}{10} \frac{1}{2}^{10} \left(1 - \frac{1}{2} \right)^{10 - \frac{1}{2}}-}
+expr18 :: Assertion
+expr18 = Right result @=? parseString program
+  where
+    result = Product (Power five ten) six
+    program = " 5 ^ 10 6"
 
+expr19 :: Assertion
+expr19 = Right result @=? parseString program
+  where
+    result = Power five (Product ten six)
+    program = " \t 5 ^ (10 * 6)  "
 
 main :: IO ()
 main = defaultMain $ testGroup "Parser Tests" [ unitTests ]
