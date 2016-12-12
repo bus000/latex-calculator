@@ -60,7 +60,7 @@ parseExpr2 = parseExpr3 `chainl1` pow
     pow = infixOp "^" Power
 
 parseExpr3 :: ReadP Expr
-parseExpr3 = fact <|> parseExpr4 <|> divi <|> binom <|> exponent -- <|> neg
+parseExpr3 = fact <|> parseExpr4 <|> divi <|> binom <|> expo
   where
     divi = do
         _ <- string "\\frac"
@@ -75,13 +75,6 @@ parseExpr3 = fact <|> parseExpr4 <|> divi <|> binom <|> exponent -- <|> neg
 
         return $ Factorial expr
 
-    pow = do
-        expr1 <- token parseExpr4
-        _ <- char '^'
-        expr2 <- parseExpr4
-
-        return $ Power expr1 expr2
-
     binom = do
         _ <- token $ string "\\binom"
         expr1 <- between (token $ char '{') (token $ char '}') parseExpr0
@@ -89,7 +82,7 @@ parseExpr3 = fact <|> parseExpr4 <|> divi <|> binom <|> exponent -- <|> neg
 
         return $ Binomial expr1 expr2
 
-    exponent = do
+    expo = do
         _ <- token $ string "exp"
         expr <- between (token $ char '(') (token $ char ')') parseExpr0
 
