@@ -9,6 +9,15 @@ import Data.Ratio
 import Numeric.IEEE
     ( epsilon
     )
+import Test.QuickCheck.Arbitrary
+    ( Arbitrary
+    , arbitrary
+    , shrink
+    )
+import Test.QuickCheck.Gen
+    ( oneof
+    , frequency
+    )
 
 data Expr
     = Sum Expr Expr
@@ -22,6 +31,18 @@ data Expr
     deriving (Show, Eq)
 
 data Number = Real Double | Whole Integer | Ratio Rational
+
+instance Arbitrary Expr where
+    arbitrary = frequency
+        [ (1, arbitrary >>= \a -> arbitrary >>= \b -> return $ Sum a b)
+        , (1, arbitrary >>= \a -> arbitrary >>= \b -> return $ Product a b)
+        , (1, arbitrary >>= \a -> arbitrary >>= \b -> return $ Fraction a b)
+        , (1, arbitrary >>= \a -> arbitrary >>= \b -> return $ Minus a b)
+        , (1, arbitrary >>= \a -> return $ Factorial a)
+        , (1, arbitrary >>= \a -> arbitrary >>= \b -> return $ Power a b)
+        , (20, arbitrary >>= \a -> return $ Literal a)
+        , (1, arbitrary >>= \a -> arbitrary >>= \b -> return $ Binomial a b)
+        ]
 
 instance Eq Number where
     (Whole a) == (Whole b) = a == b
@@ -66,6 +87,17 @@ instance Fractional Number where
     a / b = let (a', b') = toSame (a, b) in a' / b'
 
     fromRational r = Real $ fromRational r
+
+instance Arbitrary Number where
+    arbitrary = oneof
+        [ arbitrary >>= return . Whole
+        , arbitrary >>= return . Real
+        , arbitrary >>= return . Ratio
+        ]
+
+    shrink (Real n) = [Ratio $ realToFrac n]
+    shrink (Ratio n) = [Whole $ numerator n `div` denominator n]
+    shrink (Whole _) = []
 
 instance Show Number where
     show n = myShow $ simplify n
