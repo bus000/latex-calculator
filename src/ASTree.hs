@@ -6,6 +6,7 @@ import Data.Ratio
     , numerator
     , denominator
     )
+import Debug.Trace -- TODO: REMOVE
 import Numeric.IEEE
     ( epsilon
     )
@@ -13,6 +14,11 @@ import Test.QuickCheck.Arbitrary
     ( Arbitrary
     , arbitrary
     , shrink
+    )
+import Test.QuickCheck
+    ( sized
+    , scale
+    , resize
     )
 import Test.QuickCheck.Gen
     ( oneof
@@ -33,16 +39,21 @@ data Expr
 data Number = Real Double | Whole Integer | Ratio Rational
 
 instance Arbitrary Expr where
-    arbitrary = frequency
-        [ (1, arbitrary >>= \a -> arbitrary >>= \b -> return $ Sum a b)
-        , (1, arbitrary >>= \a -> arbitrary >>= \b -> return $ Product a b)
-        , (1, arbitrary >>= \a -> arbitrary >>= \b -> return $ Fraction a b)
-        , (1, arbitrary >>= \a -> arbitrary >>= \b -> return $ Minus a b)
-        , (1, arbitrary >>= \a -> return $ Factorial a)
-        , (1, arbitrary >>= \a -> arbitrary >>= \b -> return $ Power a b)
-        , (20, arbitrary >>= \a -> return $ Literal a)
-        , (1, arbitrary >>= \a -> arbitrary >>= \b -> return $ Binomial a b)
-        ]
+    arbitrary = sized expr
+      where
+        expr 0 = arbitrary >>= return . Literal
+        expr n | n > 0 = oneof
+            [ expr half >>= \a -> expr half >>= \b -> return $ Sum a b
+            , expr half >>= \a -> expr half >>= \b -> return $ Product a b
+            , expr half >>= \a -> expr half >>= \b -> return $ Fraction a b
+            , expr half >>= \a -> expr half >>= \b -> return $ Minus a b
+            , expr half >>= \a -> return $ Factorial a
+            , expr half >>= \a -> expr half >>= \b -> return $ Power a b
+            , arbitrary >>= \a -> return $ Literal a
+            , expr half >>= \a -> expr half >>= \b -> return $ Binomial a b
+            ]
+          where
+            half = n `div` 2
 
 instance Eq Number where
     (Whole a) == (Whole b) = a == b
@@ -124,13 +135,15 @@ toSame (n1, n2) = case (simplify n1, simplify n2) of
     (Ratio a, Real b) -> (Real $ fromRational a, Real b)
     (Ratio a, Ratio b) -> (Ratio a, Ratio b)
 
-pow :: Number -> Number -> Number
+pow :: Number -> Number -> Maybe Number
 pow (Whole a) (Whole b)
-    | b >= 0 = Whole (a^b)
+    | b >= 0 = return $ Whole (a^b)
     | otherwise = (Real $ fromInteger a) `pow` (Real $ fromInteger b)
-pow (Real a) (Whole b) = Real $ a^^b
-pow (Real a) (Real b) = Real $ a**b
-pow (Ratio a) (Whole b) = Ratio $ a^^b
+pow (Real a) (Whole b) = return $ Real $ a^^b
+pow (Real a) (Real b)
+    | b >= 0 = return $ Real $ a**b
+    | otherwise = Nothing
+pow (Ratio a) (Whole b) = return $ Ratio $ a^^b
 pow (Ratio a) (Ratio b) = Real (fromRational a) `pow` Real (fromRational b)
 pow a b = let (a', b') = toSame (a, b) in a' `pow` b'
 

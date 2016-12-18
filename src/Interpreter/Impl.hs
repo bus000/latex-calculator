@@ -39,7 +39,9 @@ interpret (Power e1 e2) = do
     a <- interpret e1
     b <- interpret e2
 
-    return $ a `pow` b
+    case a `pow` b of
+        Just n -> return n
+        Nothing -> Left $ TypeError "" -- TODO: Message
 
 interpret (Binomial e1 e2) = do
     a <- interpret e1

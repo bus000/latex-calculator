@@ -10,9 +10,12 @@ import Test.Tasty.HUnit
     , assertBool
     , Assertion
     )
+import Test.Tasty.QuickCheck
+    ( testProperty
+    )
 
 unitTests :: TestTree
-unitTests = testGroup "Unit tests"
+unitTests = testGroup "Unit Tests"
     [ testCase "sum1" sum1
     , testCase "sum2" sum2
 
@@ -34,6 +37,13 @@ unitTests = testGroup "Unit tests"
 
     , testCase "binom1" binom1
     , testCase "binom2" binom2
+
+    , testCase "negPow" negPow
+    ]
+
+qcTests :: TestTree
+qcTests = testGroup "QuickCheck Tests"
+    [ testProperty "timesZero1" timesZero1
     ]
 
 sum1 :: Assertion
@@ -120,8 +130,18 @@ binom2 = Left (TypeError "") @=? interpret tree
   where
     tree = Binomial ten (Literal $ Real 5)
 
+negPow :: Assertion
+negPow = Left (TypeError "") @=? interpret tree
+  where
+    tree = Power (Literal $ Whole (-2)) (Literal $ Real (-0.9788100913773324))
+
+timesZero1 :: Expr -> Bool
+timesZero1 e = case interpret (Product zero e) of
+    Right n -> n == (Whole 0)
+    Left _ -> True
+
 main :: IO ()
-main = defaultMain $ testGroup "Interpreter Tests" [ unitTests ]
+main = defaultMain $ testGroup "Interpreter Tests" [ unitTests, qcTests ]
 
 zero, one, two, three, four, five, six, seven, eight, nine, ten :: Expr
 zero = Literal $ Whole 0
