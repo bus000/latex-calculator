@@ -6,7 +6,6 @@ import Data.Ratio
     , numerator
     , denominator
     )
-import Debug.Trace -- TODO: REMOVE
 import Numeric.IEEE
     ( epsilon
     )

@@ -44,6 +44,7 @@ unitTests = testGroup "Unit Tests"
 qcTests :: TestTree
 qcTests = testGroup "QuickCheck Tests"
     [ testProperty "timesZero1" timesZero1
+    , testProperty "timesOne1" timesOne1
     ]
 
 sum1 :: Assertion
@@ -139,6 +140,12 @@ timesZero1 :: Expr -> Bool
 timesZero1 e = case interpret (Product zero e) of
     Right n -> n == (Whole 0)
     Left _ -> True
+
+timesOne1 :: Expr -> Bool
+timesOne1 e = and
+    [ interpret e == interpret (Product e (Literal $ Whole 1))
+    , interpret e == interpret (Product (Literal $ Whole 1) e)
+    ]
 
 main :: IO ()
 main = defaultMain $ testGroup "Interpreter Tests" [ unitTests, qcTests ]
