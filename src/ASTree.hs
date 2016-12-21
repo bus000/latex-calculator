@@ -55,6 +55,14 @@ instance Arbitrary Expr where
           where
             half = n `div` 2
 
+    shrink (Sum a b) = [a, b]
+    shrink (Product a b) = [a, b]
+    shrink (Fraction a b) = [a, b]
+    shrink (Minus a b) = [a, b]
+    shrink (Factorial a) = [a]
+    shrink (Power a b) = [a, b]
+    shrink (Binomial a b) = [a, b]
+
 instance Eq Number where
     (Whole a) == (Whole b) = a == b
     (Real a) == (Real b) = abs (a - b) < epsilon
@@ -141,7 +149,7 @@ pow (Whole a) (Whole b)
     | otherwise = (Real $ fromInteger a) `pow` (Real $ fromInteger b)
 pow (Real a) (Whole b) = return $ Real $ a^^b
 pow (Real a) (Real b)
-    | b >= 0 = return $ Real $ a**b
+    | a >= 0 = return $ Real $ a**b
     | otherwise = Nothing
 pow (Ratio a) (Whole b) = return $ Ratio $ a^^b
 pow (Ratio a) (Ratio b) = Real (fromRational a) `pow` Real (fromRational b)
