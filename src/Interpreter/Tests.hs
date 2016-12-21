@@ -31,6 +31,7 @@ unitTests = testGroup "Unit Tests"
     , testCase "factorial1" factorial1
     , testCase "factorial2" factorial2
     , testCase "factorial3" factorial3
+    , testCase "factorial4" factorial4
 
     , testCase "power1" power1
     , testCase "power2" power2
@@ -109,6 +110,11 @@ factorial3 = Right (Real 0.7071067811865476) @=? interpret tree
   where
     tree = Power (Fraction one two) (Fraction one two)
 
+factorial4 :: Assertion
+factorial4 = Left (TypeError "") @=? interpret tree
+  where
+    tree = Factorial $ Literal (Whole (-5))
+
 power1 :: Assertion
 power1 = Right (Whole 15625) @=? interpret tree
   where
@@ -143,8 +149,8 @@ timesZero1 e = case interpret (Product zero e) of
 
 timesOne1 :: Expr -> Bool
 timesOne1 e = and
-    [ interpret e == interpret (Product e (Literal $ Whole 1))
-    , interpret e == interpret (Product (Literal $ Whole 1) e)
+    [ interpret e == interpret (Product e one)
+    , interpret e == interpret (Product one e)
     ]
 
 main :: IO ()

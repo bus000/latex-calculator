@@ -154,6 +154,15 @@ pow (Ratio a) (Whole b) = return $ Ratio $ a^^b
 pow (Ratio a) (Ratio b) = Real (fromRational a) `pow` Real (fromRational b)
 pow a b = let (a', b') = toSame (a, b) in a' `pow` b'
 
+fact :: Number -> Maybe Number
+fact n = fact' $ simplify n
+  where
+    fact' (Whole n)
+        | n == 0 = Just $ Whole 1
+        | n >= 0 = Just $ Whole (product [1..n])
+        | otherwise = Nothing
+    fact' _ = Nothing
+
 simplify :: Number -> Number
 simplify (Ratio r) = if n `mod` d == 0 then Whole (n `div` d) else Ratio r
   where

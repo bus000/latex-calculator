@@ -31,9 +31,9 @@ interpret (Minus e1 e2) = do
 
 interpret (Factorial e) = do
     a <- interpret e
-    case simplify a of
-        Whole n -> return $ Whole (fact n)
-        _ -> Left $ TypeError "Factorial of non whole number"
+    case fact a of
+        Just res -> return res
+        _ -> Left $ TypeError "Factorial of non whole number or negative number"
 
 interpret (Power e1 e2) = do
     a <- interpret e1
@@ -52,7 +52,3 @@ interpret (Binomial e1 e2) = do
         _ -> Left $ TypeError "Binomial of non whole number"
 
 interpret (Literal num) = return num
-
-fact :: Integer -> Integer
-fact 0 = 1
-fact n = product [1..n]
