@@ -23,16 +23,19 @@ import Test.QuickCheck.Gen
     ( oneof
     , frequency
     )
+import Data.List
+    ( foldl'
+    )
 
 data Expr
-    = Sum Expr Expr
-    | Product Expr Expr
-    | Fraction Expr Expr
-    | Minus Expr Expr
-    | Factorial Expr
-    | Power Expr Expr
-    | Literal Number
-    | Binomial Expr Expr
+    = Sum !Expr !Expr
+    | Product !Expr !Expr
+    | Fraction !Expr !Expr
+    | Minus !Expr !Expr
+    | Factorial !Expr
+    | Power !Expr !Expr
+    | Literal !Number
+    | Binomial !Expr !Expr
     deriving (Show, Eq)
 
 data Number = Real Double | Whole Integer | Ratio Rational
@@ -148,7 +151,7 @@ pow (Whole a) (Whole b)
     | otherwise = (Real $ fromInteger a) `pow` (Real $ fromInteger b)
 pow (Real a) (Whole b) = return $ Real $ a^^b
 pow (Real a) (Real b)
-    | a >= 0 = return $ Real $ a**b
+    | a > 0 = return $ Real $ a**b
     | otherwise = Nothing
 pow (Ratio a) (Whole b) = return $ Ratio $ a^^b
 pow (Ratio a) (Ratio b) = Real (fromRational a) `pow` Real (fromRational b)
@@ -159,7 +162,7 @@ fact n = fact' $ simplify n
   where
     fact' (Whole n)
         | n == 0 = Just $ Whole 1
-        | n >= 0 = Just $ Whole (product [1..n])
+        | n >= 0 = Just $ Whole (foldl' (*) 1 [1..n])
         | otherwise = Nothing
     fact' _ = Nothing
 
