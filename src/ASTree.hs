@@ -43,7 +43,7 @@ data Number = Real Double | Whole Integer | Ratio Rational
 instance Arbitrary Expr where
     arbitrary = sized expr
       where
-        expr 0 = arbitrary >>= return . Literal
+        expr 0 = fmap Literal arbitrary
         expr n | n > 0 = oneof
             [ expr half >>= \a -> expr half >>= \b -> return $ Sum a b
             , expr half >>= \a -> expr half >>= \b -> return $ Product a b
@@ -111,9 +111,9 @@ instance Fractional Number where
 
 instance Arbitrary Number where
     arbitrary = oneof
-        [ arbitrary >>= return . Whole
-        , arbitrary >>= return . Real
-        , arbitrary >>= return . Ratio
+        [ fmap Whole arbitrary
+        , fmap Real arbitrary
+        , fmap Ratio arbitrary
         ]
 
     shrink (Real n) = [Ratio $ realToFrac n]

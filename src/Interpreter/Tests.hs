@@ -150,14 +150,12 @@ negPow = Left (TypeError "") @=? interpret tree
 
 timesZero1 :: Expr -> Bool
 timesZero1 e = case interpret (Product zero e) of
-    Right n -> n == (Whole 0)
+    Right n -> n == Whole 0
     Left _ -> True
 
 timesOne1 :: Expr -> Bool
-timesOne1 e = and
-    [ interpret e == interpret (Product e one)
-    , interpret e == interpret (Product one e)
-    ]
+timesOne1 e = (interpret e == interpret (Product e one)) &&
+    (interpret e == interpret (Product one e))
 
 main :: IO ()
 main = defaultMain $ testGroup "Interpreter Tests" [ unitTests, qcTests ]
