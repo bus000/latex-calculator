@@ -16,15 +16,9 @@ import Test.QuickCheck.Arbitrary
     )
 import Test.QuickCheck
     ( sized
-    , scale
-    , resize
     )
 import Test.QuickCheck.Gen
     ( oneof
-    , frequency
-    )
-import Data.List
-    ( foldl'
     )
 
 data Expr
@@ -44,7 +38,7 @@ instance Arbitrary Expr where
     arbitrary = sized expr
       where
         expr 0 = fmap Literal arbitrary
-        expr n | n > 0 = oneof
+        expr n = oneof
             [ expr half >>= \a -> expr half >>= \b -> return $ Sum a b
             , expr half >>= \a -> expr half >>= \b -> return $ Product a b
             , expr half >>= \a -> expr half >>= \b -> return $ Fraction a b
@@ -57,6 +51,7 @@ instance Arbitrary Expr where
           where
             half = n `div` 2
 
+    shrink (Literal _) = []
     shrink (Sum a b) = [a, b]
     shrink (Product a b) = [a, b]
     shrink (Fraction a b) = [a, b]

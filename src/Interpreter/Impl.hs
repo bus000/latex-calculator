@@ -67,8 +67,8 @@ pow a b = let (a', b') = toSame (a, b) in a' `pow` b'
 fact :: Number -> Either LatCalError Number
 fact n = fact' $ simplify n
   where
-    fact' (Whole n)
-        | n == 0 = return $ Whole 1
-        | n >= 0 = return $ Whole (foldl' (*) 1 [1..n])
+    fact' (Whole n')
+        | n' == 0 = return $ Whole 1
+        | n' >= 0 = return $ Whole (foldl' (*) 1 [1..n'])
         | otherwise = Left $ TypeError "Factorial of negative number"
     fact' _ = Left $ TypeError "Factorial of non whole number"
