@@ -35,6 +35,7 @@ unitTests = testGroup "Unit Tests"
 
     , testCase "power1" power1
     , testCase "power2" power2
+    , testCase "power3" power3
 
     , testCase "binom1" binom1
     , testCase "binom2" binom2
@@ -126,6 +127,11 @@ power2 = Right (Real 15625) @=? interpret tree
   where
     tree = Power (Literal $ Whole 5)
         (Power (Literal $ Real 6) (Literal $ Whole 1))
+
+power3 :: Assertion
+power3 = Left (TypeError "") @=? interpret tree
+  where
+    tree = Power zero (Literal $ Real (-1.9370162592500908))
 
 binom1 :: Assertion
 binom1 = Right (Whole 252) @=? interpret tree
