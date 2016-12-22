@@ -145,27 +145,6 @@ toSame (n1, n2) = case (simplify n1, simplify n2) of
     (Ratio a, Real b) -> (Real $ fromRational a, Real b)
     (Ratio a, Ratio b) -> (Ratio a, Ratio b)
 
-pow :: Number -> Number -> Maybe Number
-pow (Whole a) (Whole b)
-    | b >= 0 = return $ Whole (a^b)
-    | otherwise = (Real $ fromInteger a) `pow` (Real $ fromInteger b)
-pow (Real a) (Whole b) = return $ Real $ a^^b
-pow (Real a) (Real b)
-    | a > 0 = return $ Real $ a**b
-    | otherwise = Nothing
-pow (Ratio a) (Whole b) = return $ Ratio $ a^^b
-pow (Ratio a) (Ratio b) = Real (fromRational a) `pow` Real (fromRational b)
-pow a b = let (a', b') = toSame (a, b) in a' `pow` b'
-
-fact :: Number -> Maybe Number
-fact n = fact' $ simplify n
-  where
-    fact' (Whole n)
-        | n == 0 = Just $ Whole 1
-        | n >= 0 = Just $ Whole (foldl' (*) 1 [1..n])
-        | otherwise = Nothing
-    fact' _ = Nothing
-
 simplify :: Number -> Number
 simplify (Ratio r) = if n `mod` d == 0 then Whole (n `div` d) else Ratio r
   where
