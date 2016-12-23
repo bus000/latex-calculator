@@ -7,7 +7,6 @@ import Test.Tasty
 import Test.Tasty.HUnit
     ( testCase
     , (@=?)
-    , assertBool
     , Assertion
     )
 import Test.Tasty.QuickCheck
@@ -41,6 +40,8 @@ unitTests = testGroup "Unit Tests"
     , testCase "binom2" binom2
 
     , testCase "negPow" negPow
+
+    , testCase "test1" test1
     ]
 
 qcTests :: TestTree
@@ -157,9 +158,6 @@ timesOne1 :: Expr -> Bool
 timesOne1 e = (interpret e == interpret (Product e one)) &&
     (interpret e == interpret (Product one e))
 
-main :: IO ()
-main = defaultMain $ testGroup "Interpreter Tests" [ unitTests, qcTests ]
-
 zero, one, two, three, four, five, six, seven, eight, nine, ten :: Expr
 zero = Literal $ Whole 0
 one = Literal $ Whole 1
@@ -172,3 +170,8 @@ seven = Literal $ Whole 7
 eight = Literal $ Whole 8
 nine = Literal $ Whole 9
 ten = Literal $ Whole 10
+
+test1 :: Assertion
+test1 = Left (TypeError "") @=? interpret tree
+  where
+    tree = Power (Product (Literal $ Real (-3.4886732674248755)) (Product (Literal $ Real 5.925648477728508) (Minus (Literal $ Whole (-7)) (Literal $ Whole 3)))) (Factorial (Literal $ Whole 16))

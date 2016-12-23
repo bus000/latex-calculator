@@ -1,4 +1,4 @@
-module Interpreter.Tests where
+module Parser.Tests where
 
 import ASTree
 import Parser.Impl
@@ -177,16 +177,15 @@ expr10 :: Assertion
 expr10 = Right result @=? parseString program
   where
     result = Power two (Power two two)
-    two = Literal $ Whole 2
     program = "2\t^(2 ^   \n 2)\n"
 
 expr11 :: Assertion
 expr11 = Right result @=? parseString program
   where
-    result = Power base exponent
+    result = Power base expo
     program = "\\left( \\frac{1}{2} \\right)^{10}"
     base = Fraction one two
-    exponent = ten
+    expo = ten
 
 expr12 :: Assertion
 expr12 = Right result @=? parseString program
@@ -203,9 +202,9 @@ expr13 = Right result @=? parseString program
 expr14 :: Assertion
 expr14 = Right result @=? parseString program
   where
-    result = Power base exponent
+    result = Power base expo
     base = Literal $ Real (exp 1)
-    exponent = Product (Product (Literal $ Whole (-10)) ten)
+    expo = Product (Product (Literal $ Whole (-10)) ten)
         (Power (Fraction one two) two)
     program = "exp(-10 \\cdot 10 \\frac{1}{2}^2)"
 
@@ -238,9 +237,6 @@ expr19 = Right result @=? parseString program
   where
     result = Power five (Product ten six)
     program = " \t 5 ^ (10 * 6)  "
-
-main :: IO ()
-main = defaultMain $ testGroup "Parser Tests" [ unitTests ]
 
 zero, one, two, three, four, five, six, seven, eight, nine, ten :: Expr
 zero = Literal $ Whole 0
