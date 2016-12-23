@@ -1,4 +1,6 @@
-module Parser.Tests where
+module Parser.Tests
+    ( tests
+    ) where
 
 import ASTree
 import Parser.Impl
@@ -13,6 +15,11 @@ import Test.Tasty.HUnit
 import Text.ParserCombinators.ReadP
     ( readP_to_S
     )
+
+tests :: TestTree
+tests = testGroup "Parser Tests"
+    [ unitTests
+    ]
 
 unitTests :: TestTree
 unitTests = testGroup "Unit tests"

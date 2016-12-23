@@ -1,4 +1,6 @@
-module Interpreter.Tests where
+module Interpreter.Tests
+    ( tests
+    ) where
 
 import ASTree
 import Interpreter.Impl
@@ -12,6 +14,12 @@ import Test.Tasty.HUnit
 import Test.Tasty.QuickCheck
     ( testProperty
     )
+
+tests :: TestTree
+tests = testGroup "Interpreter Tests"
+    [ unitTests
+    , qcTests
+    ]
 
 unitTests :: TestTree
 unitTests = testGroup "Unit Tests"
