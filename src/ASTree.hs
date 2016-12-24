@@ -21,19 +21,30 @@ import Test.QuickCheck.Gen
     ( oneof
     )
 
+{- | Abstract syntax tree of latex expressions. -}
 data Expr
-    = Sum !Expr !Expr
-    | Product !Expr !Expr
-    | Fraction !Expr !Expr
-    | Minus !Expr !Expr
-    | Factorial !Expr
-    | Power !Expr !Expr
-    | Literal !Number
-    | Binomial !Expr !Expr
+    = Sum !Expr !Expr -- ^ Expression representing a sum.
+    | Product !Expr !Expr -- ^ Expression representing a product.
+    | Fraction !Expr !Expr -- ^ Expression representing a fraction.
+    | Minus !Expr !Expr -- ^ Expression representing a subtraction.
+    | Factorial !Expr -- ^ Expression representing a factorial.
+    | Power !Expr !Expr -- ^ Expression representing a power.
+    | Literal !Number -- ^ Expression representing a literal number.
+    | Binomial !Expr !Expr -- ^ Expression representing binomials.
     deriving (Show, Eq)
 
-data Number = Real Double | Whole Integer | Ratio Rational
+{- | The number type for the interpreter. Conversions between the number types
+ - are performed automatically when arithmetic is done with them. For example a
+ - whole number divided by a whole number will result in a Ratio. The numbers
+ - try to keep precision whenever it can and will only go to a Real number when
+ - it is forced to do so. When an expression has resulted in a Real number it
+ - can never become Whole or Ratio again. -}
+data Number
+    = Real Double -- ^ Represents a real number by using Doubles.
+    | Whole Integer -- ^ Represent a whole number by an infinite integer.
+    | Ratio Rational -- ^ Represent a ratio by using Rational's.
 
+{- | Arbitrary expressions to use with QuickCheck. -}
 instance Arbitrary Expr where
     arbitrary = sized expr
       where
@@ -60,12 +71,17 @@ instance Arbitrary Expr where
     shrink (Power a b) = [a, b]
     shrink (Binomial a b) = [a, b]
 
+{- | Whole and Ratio is compared with normal equality while Real numbers are
+ - compared using the machine-epsilon. -}
 instance Eq Number where
     (Whole a) == (Whole b) = a == b
     (Real a) == (Real b) = abs (a - b) < epsilon
     (Ratio a) == (Ratio b) = a == b
     a == b = let (a', b') = toSame (a, b) in a' == b'
 
+{- | Makes number an instance of Num to be able to do arithmetic on numbers. As
+ - explained earlier numbers will be converted to the same type of number as it
+ - is needed. -}
 instance Num Number where
     (Whole a) + (Whole b) = Whole $ a + b
     (Real a) + (Real b) = Real $ a + b
@@ -96,6 +112,8 @@ instance Num Number where
     negate (Real d) = Real $ negate d
     negate (Ratio r) = Ratio $ negate r
 
+{- | Makes Number an instance of Fractional to allow for numbers to be divided
+ - by each other. -}
 instance Fractional Number where
     (Whole a) / (Whole b) = Ratio (a % b)
     (Real a) / (Real b) = Real $ a / b
@@ -104,6 +122,7 @@ instance Fractional Number where
 
     fromRational r = Real $ fromRational r
 
+{- | To be used with QuickCheck to generate random test cases. -}
 instance Arbitrary Number where
     arbitrary = oneof
         [ fmap Whole arbitrary
@@ -115,10 +134,14 @@ instance Arbitrary Number where
     shrink (Ratio n) = [Whole $ numerator n `div` denominator n]
     shrink (Whole _) = []
 
+{- | Allows one to print Number's in latex syntax. -}
 instance Show Number where
     show n = myShow $ simplify n
 
-myShow :: Number -> String
+{- | Show a Number as latex writes them. -}
+myShow :: Number
+    -- ^ Number to show.
+    -> String
 myShow (Real d) = show d
 myShow (Whole n) = show n
 myShow (Ratio r) = "\\frac{" ++ show n ++ "}{" ++ show d ++ "}"
@@ -126,7 +149,14 @@ myShow (Ratio r) = "\\frac{" ++ show n ++ "}{" ++ show d ++ "}"
     n = numerator r
     d = denominator r
 
-toSame :: (Number, Number) -> (Number, Number)
+{- | Convert to numbers to the same type of number. To perform most arithmetic
+ - operations we need to have either two Whole, two Real or two Ratio's. The
+ - function will first try if it can return two whole numbers if that can't be
+ - done, it will try to return two Ratio's and finally it will default to
+ - returning two Real numbers. -}
+toSame :: (Number, Number)
+    -- ^ The two Number's to take to the same type.
+    -> (Number, Number)
 toSame (n1, n2) = case (simplify n1, simplify n2) of
     (Whole a, Whole b) -> (Whole a, Whole b)
     (Whole a, Real b) -> (Real $ fromIntegral a, Real b)
@@ -140,19 +170,25 @@ toSame (n1, n2) = case (simplify n1, simplify n2) of
     (Ratio a, Real b) -> (Real $ fromRational a, Real b)
     (Ratio a, Ratio b) -> (Ratio a, Ratio b)
 
-simplify :: Number -> Number
+{- | Simplify a Number by trying to get it to be a Whole number. -}
+simplify :: Number
+    -- ^ The number to simplify.
+    -> Number
 simplify (Ratio r) = if n `mod` d == 0 then Whole (n `div` d) else Ratio r
   where
     n = numerator r
     d = denominator r
 simplify n = n
 
+{- | Represents an error in the interpretation of an abstract syntax tree and
+ - the parsing of an input string. -}
 data LatCalError
-    = TypeError String
-    | DivideByZero
-    | ParserError String
+    = TypeError String -- ^ Mathematical operator applied to wrong argument.
+    | DivideByZero -- ^ Division by zero error.
+    | ParserError String -- ^ Any error in the parser is represented here.
     deriving (Show)
 
+{- | Compare errors. -}
 instance Eq LatCalError where
     TypeError _ == TypeError _ = True
     DivideByZero == DivideByZero = True
