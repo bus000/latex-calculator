@@ -8,7 +8,11 @@ import Data.List
     ( foldl'
     )
 
-interpret :: Expr -> Either LatCalError Number
+{- | Interpret a latex expression in the Either monad. The interpretation will
+ - result in either a Number or a LatCalError. -}
+interpret :: Expr
+    -- ^ Expression to interpret.
+    -> Either LatCalError Number
 interpret (Sum e1 e2) = do
     a <- interpret e1
     b <- interpret e2
@@ -52,19 +56,28 @@ interpret (Binomial e1 e2) = do
 
 interpret (Literal num) = return num
 
-pow :: Number -> Number -> Either LatCalError Number
-pow (Whole a) (Whole b)
-    | b >= 0 = return $ Whole (a^b)
-    | otherwise = (Real $ fromInteger a) `pow` (Real $ fromInteger b)
-pow (Real a) (Whole b) = return $ Real $ a^^b
-pow (Real a) (Real b)
-    | a > 0 = return $ Real $ a**b
+{- | Computes the power of two Number's, pow b n returns b^n or an error. -}
+pow :: Number
+    -- ^ Base of the exponentiation.
+    -> Number
+    -- ^ Exponent of the exponentiation.
+    -> Either LatCalError Number
+pow (Whole b) (Whole n)
+    | n >= 0 = return $ Whole (b^n)
+    | otherwise = (Real $ fromInteger b) `pow` (Real $ fromInteger n)
+pow (Real b) (Whole n) = return $ Real $ b^^n
+pow (Real b) (Real n)
+    | b > 0 = return $ Real $ b**n
     | otherwise = Left $ TypeError "" -- TODO: Message
-pow (Ratio a) (Whole b) = return $ Ratio $ a^^b
-pow (Ratio a) (Ratio b) = Real (fromRational a) `pow` Real (fromRational b)
-pow a b = let (a', b') = toSame (a, b) in a' `pow` b'
+pow (Ratio b) (Whole n) = return $ Ratio $ b^^n
+pow (Ratio b) (Ratio n) = Real (fromRational b) `pow` Real (fromRational n)
+pow b n = let (b', n') = toSame (b, n) in b' `pow` n'
 
-fact :: Number -> Either LatCalError Number
+{- | Computes the factorial of Number's. Factorials of negative or non whole
+ - numbers results in a TypeError. -}
+fact :: Number
+    -- ^ Number to compute factorial of.
+    -> Either LatCalError Number
 fact n = fact' $ simplify n
   where
     fact' (Whole n')

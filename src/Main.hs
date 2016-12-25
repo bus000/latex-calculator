@@ -18,7 +18,12 @@ main = do
         [str] -> runProgram str
         _ -> getLine >>= \line -> runProgram line
 
-runProgram :: String -> IO ()
+{- | Takes a latex expression string and parse and interpret it. The function
+ - outputs the result of interpreting the program or the error encountered
+ - during interpretation. -}
+runProgram :: String
+    -- ^ String to parse and interpret.
+    -> IO ()
 runProgram p = case parseString p >>= interpret of
     Left err -> print err
     Right res -> print res
