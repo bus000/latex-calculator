@@ -1,6 +1,4 @@
-module Parser.Impl
-    ( parseString
-    ) where
+module Parser.Impl where
 
 import Control.Applicative
     ( (<|>)
