@@ -1,4 +1,6 @@
-module Parser.Impl where
+module Parser.Impl
+    ( parseString
+    ) where
 
 import Control.Applicative
     ( (<|>)
@@ -27,7 +29,11 @@ import Data.Char
     ( isDigit
     )
 
-parseString :: String -> Either LatCalError Expr
+{- | Parse a latex expression string to either a parseerror or a latex
+ - expression. -}
+parseString :: String
+    -- ^ String to parse.
+    -> Either LatCalError Expr
 parseString str = case readP_to_S parseExpr str of
     [(program, "")] -> Right program
     _ -> Left $ ParserError "Parse error"
