@@ -40,9 +40,9 @@ data Expr
  - it is forced to do so. When an expression has resulted in a Real number it
  - can never become Whole or Ratio again. -}
 data Number
-    = Real Double -- ^ Represents a real number by using Doubles.
-    | Whole Integer -- ^ Represent a whole number by an infinite integer.
-    | Ratio Rational -- ^ Represent a ratio by using Rational's.
+    = Real !Double -- ^ Represents a real number by using Doubles.
+    | Whole !Integer -- ^ Represent a whole number by an infinite integer.
+    | Ratio !Rational -- ^ Represent a ratio by using Rational's.
 
 {- | Arbitrary expressions to use with QuickCheck. -}
 instance Arbitrary Expr where
