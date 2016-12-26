@@ -1,4 +1,4 @@
-module Parser.Impl where
+module Parser.Internal where
 
 import Control.Applicative
     ( (<|>)

@@ -3,7 +3,7 @@ module Interpreter.Tests
     ) where
 
 import ASTree
-import Interpreter.Impl
+import Interpreter.Internal
 
 import Test.Tasty
 import Test.Tasty.HUnit
@@ -166,17 +166,17 @@ timesOne1 :: Expr -> Bool
 timesOne1 e = (interpret e == interpret (Product e one)) &&
     (interpret e == interpret (Product one e))
 
-zero, one, two, three, four, five, six, seven, eight, nine, ten :: Expr
+zero, one, two, _three, _four, five, _six, _seven, _eight, _nine, ten :: Expr
 zero = Literal $ Whole 0
 one = Literal $ Whole 1
 two = Literal $ Whole 2
-three = Literal $ Whole 3
-four = Literal $ Whole 4
+_three = Literal $ Whole 3
+_four = Literal $ Whole 4
 five = Literal $ Whole 5
-six = Literal $ Whole 6
-seven = Literal $ Whole 7
-eight = Literal $ Whole 8
-nine = Literal $ Whole 9
+_six = Literal $ Whole 6
+_seven = Literal $ Whole 7
+_eight = Literal $ Whole 8
+_nine = Literal $ Whole 9
 ten = Literal $ Whole 10
 
 test1 :: Assertion

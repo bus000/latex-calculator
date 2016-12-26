@@ -194,3 +194,7 @@ instance Eq LatCalError where
     DivideByZero == DivideByZero = True
     ParserError _ == ParserError _ = True
     _ == _ = False
+
+{-pretty :: Expr -> String-}
+{-pretty (Literal n) = myShow n-}
+{-pretty (Sum a b) = if lesser-}

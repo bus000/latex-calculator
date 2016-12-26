@@ -1,4 +1,4 @@
-module Interpreter.Impl where
+module Interpreter.Internal where
 
 import ASTree
 import Math.Combinatorics.Exact.Binomial

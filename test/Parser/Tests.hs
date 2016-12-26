@@ -3,7 +3,7 @@ module Parser.Tests
     ) where
 
 import ASTree
-import Parser.Impl
+import Parser.Internal
 
 import Test.Tasty
 import Test.Tasty.HUnit
@@ -245,15 +245,15 @@ expr19 = Right result @=? parseString program
     result = Power five (Product ten six)
     program = " \t 5 ^ (10 * 6)  "
 
-zero, one, two, three, four, five, six, seven, eight, nine, ten :: Expr
-zero = Literal $ Whole 0
+_zero, one, two, three, four, five, six, _seven, _eight, _nine, ten :: Expr
+_zero = Literal $ Whole 0
 one = Literal $ Whole 1
 two = Literal $ Whole 2
 three = Literal $ Whole 3
 four = Literal $ Whole 4
 five = Literal $ Whole 5
 six = Literal $ Whole 6
-seven = Literal $ Whole 7
-eight = Literal $ Whole 8
-nine = Literal $ Whole 9
+_seven = Literal $ Whole 7
+_eight = Literal $ Whole 8
+_nine = Literal $ Whole 9
 ten = Literal $ Whole 10

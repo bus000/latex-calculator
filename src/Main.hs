@@ -3,10 +3,10 @@ module Main where
 import System.Environment
     ( getArgs
     )
-import Parser.Impl
+import Parser.Parser
     ( parseString
     )
-import Interpreter.Impl
+import Interpreter.Interpreter
     ( interpret
     )
 
