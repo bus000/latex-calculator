@@ -56,6 +56,8 @@ qcTests :: TestTree
 qcTests = testGroup "QuickCheck Tests"
     [ testProperty "timesZero1" timesZero1
     , testProperty "timesOne1" timesOne1
+    , testProperty "selfEquality1" selfEquality1
+    , testProperty "selfEquality2" selfEquality2
     ]
 
 sum1 :: Assertion
@@ -165,6 +167,12 @@ timesZero1 e = case interpret (Product zero e) of
 timesOne1 :: Expr -> Bool
 timesOne1 e = (interpret e == interpret (Product e one)) &&
     (interpret e == interpret (Product one e))
+
+selfEquality1 :: Expr -> Bool
+selfEquality1 e = interpret e == interpret e
+
+selfEquality2 :: Number -> Bool
+selfEquality2 n = n == n
 
 zero, one, two, _three, _four, five, _six, _seven, _eight, _nine, ten :: Expr
 zero = Literal $ Whole 0
